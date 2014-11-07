@@ -27,6 +27,7 @@ package agents;
 
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.FailureException;
@@ -55,27 +56,23 @@ import util.Question;
  */
 public class Fire extends Agent {
 
-	protected void setup() {
-		System.out.println("Agent "+getLocalName()+" waiting for requests...");
-		MessageTemplate template = MessageTemplate.and(
-				MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
-				MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
+	MessageTemplate template = MessageTemplate.and(
+			MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
+			MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
 
-		SequentialBehaviour sb = new SequentialBehaviour();
+	private class AnswearingBehaviour extends CyclicBehaviour{
 
-		addBehaviour(sb);
+		public AnswearingBehaviour(Agent x) {
+			super(x);
+		}
 
-		sb.addSubBehaviour(new AchieveREResponder(this, template) {
-			protected ACLMessage prepareResponse(ACLMessage request) throws NotUnderstoodException, RefuseException {
+		@Override
+		public void action() {
+			ACLMessage request = myAgent.receive(template);
+
+			if (request != null) {
 				System.out.println("Agent "+getLocalName()+": REQUEST received from "+request.getSender().getName() + " type: " + request.getPerformative()); //+". Action is "+request.getContent());
 
-				/*if (request.getOntology().equals("result")) {
-					ACLMessage agree = request.createReply();
-					agree.setPerformative(ACLMessage.AGREE);
-					System.out.println("FIRE: I agree!");
-					return agree;
-				}*/
-					
 				Question x = null;
 				try {
 					x = (Question) request.getContentObject();
@@ -84,18 +81,91 @@ public class Fire extends Agent {
 					e.printStackTrace();
 				}
 
-				
+
 				// Fill the REQUEST message
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 
-					msg.addReceiver(new AID((String) "sabio" , AID.ISLOCALNAME));
+				msg.addReceiver(new AID((String) "sabio" , AID.ISLOCALNAME));
+
+				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+				// We want to receive a reply in 10 secs
+				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
+				msg.setOntology("oioi");
+
+				try {
+					msg.setContentObject(x);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				send(msg);
+
+				ACLMessage hey = blockingReceive(MessageTemplate.MatchOntology("oioi"),50000);
+
+				// We agree to perform the action. Note that in the FIPA-Request
+				// protocol the AGREE message is optional. Return null if you
+				// don't want to send it.
+				System.out.println("Agent "+getLocalName()+": Agree");
+				ACLMessage agree = request.createReply();
+
+				double y;
+				y = Double.parseDouble(hey.getContent());
+				agree.setContent(Double.toString(y));
+				System.out.println("FIRE: Received from sabio: " + y);
+
+				agree.setPerformative(ACLMessage.INFORM);
+
+				send(agree);
 				
+				ACLMessage ok = blockingReceive(MessageTemplate.MatchOntology("solution"),50000);
+				
+				if (ok.getPerformative() == ACLMessage.CONFIRM)
+					System.out.println("FIRE SAYS: Answer is correct");
+				else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
+					System.out.println("FIRE SAYS: Answer is incorrect");
+				else 
+					System.out.println("FIRE SAYS: estás tolo");
+			}
+			else {
+				block();
+			}
+
+
+		}
+	}
+
+	protected void setup() {
+		System.out.println("Agent "+getLocalName()+" waiting for requests...");
+
+		addBehaviour(new AnswearingBehaviour(this));
+		/*SequentialBehaviour sb = new SequentialBehaviour();
+
+		addBehaviour(sb);
+
+		sb.addSubBehaviour(new AchieveREResponder(this, template) {
+			protected ACLMessage prepareResponse(ACLMessage request) throws NotUnderstoodException, RefuseException {
+				System.out.println("Agent "+getLocalName()+": REQUEST received from "+request.getSender().getName() + " type: " + request.getPerformative()); //+". Action is "+request.getContent());
+
+
+				Question x = null;
+				try {
+					x = (Question) request.getContentObject();
+					x.printQuestion();
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}
+
+
+				// Fill the REQUEST message
+				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+
+				msg.addReceiver(new AID((String) "sabio" , AID.ISLOCALNAME));
+
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				// We want to receive a reply in 10 secs
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
 				msg.setContent("dummy-action");
 				msg.setOntology("oioi");
-				
+
 				try {
 					msg.setContentObject(x);
 				} catch (IOException e) {
@@ -118,13 +188,13 @@ public class Fire extends Agent {
 						agree.setContentObject(new Double(y));
 						System.out.println("FIRE: Received from sabio: " + y);
 					} catch (UnreadableException e) {
-						
+
 						e.printStackTrace();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					agree.setPerformative(ACLMessage.INFORM);
 
 					return agree;
@@ -158,7 +228,7 @@ public class Fire extends Agent {
 					throw new FailureException("unexpected-error");
 				}
 			}
-		} );
+		} );*/
 	}
 
 	private boolean checkAction() {

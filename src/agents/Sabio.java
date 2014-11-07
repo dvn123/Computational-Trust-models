@@ -76,12 +76,7 @@ public class Sabio extends Agent {
 					ACLMessage agree = request.createReply();
 					if(x != null) {
 						System.out.println("Sabio result: " + Double.toString(x.getResult()));
-						try {
-							agree.setContentObject(new Double(x.getResult()));
-						} catch (IOException e) {
-							System.err.println("SabioERROR");
-							e.printStackTrace();
-						}
+						agree.setContent(Double.toString(x.getResult()));
 					}
 					agree.setPerformative(ACLMessage.INFORM);
 

@@ -1,30 +1,5 @@
 package agents;
 
-/**
- * ***************************************************************
- * JADE - Java Agent DEvelopment Framework is a framework to develop
- * multi-agent systems in compliance with the FIPA specifications.
- * Copyright (C) 2000 CSELT S.p.A.
- * 
- * GNU Lesser General Public License
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -38,14 +13,7 @@ import java.util.Date;
 
 import util.Question;
 
-/**
-   This example shows how to implement the initiator role in 
-   a FIPA-request interaction protocol. In this case in particular 
-   we use an <code>AchieveREInitiator</code> ("Achieve Rational effect") 
-   to request a dummy action to a number of agents (whose local
-   names must be specified as arguments).
-   @author Giovanni Caire - TILAB
- */
+
 public class Manela extends Agent {
 	
 	private class QuestioningBehaviour extends CyclicBehaviour {
@@ -91,27 +59,19 @@ public class Manela extends Agent {
 				ACLMessage hey = blockingReceive(template, 10000);
 
 				System.out.println("Agent "+hey.getSender().getName()+" successfully performed the requested action");
-				try {
-					double result = (Double) hey.getContentObject();
-					System.out.println("MANELA: Result returned: " + result);
+				double result = Double.parseDouble(hey.getContent());
+				System.out.println("MANELA: Result returned: " + result);
 
-					/*ACLMessage reply = inform.createReply();
-					reply.setOntology("solution");
+				ACLMessage reply = hey.createReply();
+				reply.setOntology("solution");
 
-					reply.setPerformative(result == question.getResult()? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
-					System.out.println("MANELA: Sending solution");
-					send(reply);*/
-
-
-				} catch (UnreadableException e) {
-					System.err.println("MANELAERROR");
-					e.printStackTrace();
-				}
+				reply.setPerformative(result == question.getResult()? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
+				System.out.println("MANELA: Sending solution");
+				send(reply);
 			}
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
