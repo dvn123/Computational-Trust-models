@@ -23,15 +23,16 @@
 
 package agents;
 
-import jade.core.Agent;
 import jade.core.AID;
-import jade.core.behaviours.*;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
+import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
-import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import util.Question;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class QuestionAgent extends Agent {
             System.out.println("Question is "+ q.op1 + " " + q.operator + " " + q.op2);
 
             // Add a TickerBehaviour that schedules a request to seller agents every minute
-            addBehaviour(new TickerBehaviour(this, 60000) {
+            addBehaviour(new TickerBehaviour(this, 6000) {
                 protected void onTick() {
                     // Update the list of seller agents
                     DFAgentDescription template = new DFAgentDescription();
