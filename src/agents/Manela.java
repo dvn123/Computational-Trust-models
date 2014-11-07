@@ -30,13 +30,13 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import jade.proto.AchieveREInitiator;
-import util.Question;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Vector;
+
+import util.Question;
 
 /**
    This example shows how to implement the initiator role in 
@@ -47,81 +47,91 @@ import java.util.Vector;
    @author Giovanni Caire - TILAB
  */
 public class Manela extends Agent {
-	private int nResponders;
+	
+	private class QuestioningBehaviour extends CyclicBehaviour {
+		Object[] args;
+		private int nResponders;
+		
+		MessageTemplate template = MessageTemplate.and(
+				MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
+				MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+		
+		public QuestioningBehaviour (Agent a, Object[] args) {
+			super(a);
+			this.args = args;
+		}
+		
+		@Override
+		public void action() {
+			
+			if (args != null && args.length > 0) {
+				nResponders = args.length;
+				System.out.println("Requesting dummy-action to "+nResponders+" responders.");
+
+				// Fill the REQUEST message
+				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+				for (int i = 0; i < args.length; ++i) {
+					msg.addReceiver(new AID((String) args[i], AID.ISLOCALNAME));
+				}
+				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+				// We want to receive a reply in 10 secs
+				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
+				msg.setContent("dummy-action");
+
+				question = Question.generateQuestion();
+
+				try {
+					msg.setContentObject(question);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				send(msg);
+
+				ACLMessage hey = blockingReceive(template, 10000);
+
+				System.out.println("Agent "+hey.getSender().getName()+" successfully performed the requested action");
+				try {
+					double result = (Double) hey.getContentObject();
+					System.out.println("MANELA: Result returned: " + result);
+
+					/*ACLMessage reply = inform.createReply();
+					reply.setOntology("solution");
+
+					reply.setPerformative(result == question.getResult()? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
+					System.out.println("MANELA: Sending solution");
+					send(reply);*/
+
+
+				} catch (UnreadableException e) {
+					System.err.println("MANELAERROR");
+					e.printStackTrace();
+				}
+			}
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	
 	private Question question;
 
 	protected void setup() {
 		// Read names of responders as arguments
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
-			nResponders = args.length;
-			System.out.println("Requesting dummy-action to "+nResponders+" responders.");
 
-			// Fill the REQUEST message
-			ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-			for (int i = 0; i < args.length; ++i) {
-				msg.addReceiver(new AID((String) args[i], AID.ISLOCALNAME));
-			}
-			msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-			// We want to receive a reply in 10 secs
-			msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
-			msg.setContent("dummy-action");
-
-			question = Question.generateQuestion();
-
-			try {
-				msg.setContentObject(question);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-
-			addBehaviour(new AchieveREInitiator(this, msg) {
-				protected void handleInform(ACLMessage inform) {
-					System.out.println("Agent "+inform.getSender().getName()+" successfully performed the requested action");
-					try {
-						double result = (Double) inform.getContentObject();
-						System.out.println("MANELA: Result returned: " + result);
-
-						/*ACLMessage reply = inform.createReply();
-						reply.setOntology("solution");
-
-						reply.setPerformative(result == question.getResult()? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
-						System.out.println("MANELA: Sending solution");
-						send(reply);*/
-						
-						
-					} catch (UnreadableException e) {
-						System.err.println("MANELAERROR");
-						e.printStackTrace();
-					}
-
-				}
-				protected void handleRefuse(ACLMessage refuse) {
-					System.out.println("Agent "+refuse.getSender().getName()+" refused to perform the requested action");
-					nResponders--;
-				}
-				protected void handleFailure(ACLMessage failure) {
-					if (failure.getSender().equals(myAgent.getAMS())) {
-						// FAILURE notification from the JADE runtime: the receiver
-						// does not exist
-						System.out.println("Responder does not exist");
-					}
-					else {
-						System.out.println("Agent "+failure.getSender().getName()+" failed to perform the requested action");
-					}
-				}
-				protected void handleAllResultNotifications(Vector notifications) {
-					if (notifications.size() < nResponders) {
-						// Some responder didn't reply within the specified timeout
-						System.out.println("Timeout expired: missing "+(nResponders - notifications.size())+" responses");
-					}
-				}
-			} );
+		addBehaviour(new QuestioningBehaviour(this, args));
+		
 		}
 		else {
 			System.out.println("No responder specified.");
 		}
 	} 
 }
+
 

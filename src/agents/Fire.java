@@ -105,9 +105,6 @@ public class Fire extends Agent {
 
 				ACLMessage hey = blockingReceive(MessageTemplate.MatchOntology("oioi"),50000);
 
-				
-
-
 				if (checkAction()) {
 					// We agree to perform the action. Note that in the FIPA-Request
 					// protocol the AGREE message is optional. Return null if you
