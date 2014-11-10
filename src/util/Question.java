@@ -1,6 +1,7 @@
 package util;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Random;
 
 
@@ -11,6 +12,10 @@ public class Question implements Serializable {
     public static final int OPERATOR_MINUS = 1;
     public static final int OPERATOR_MUL = 2;
     public static final int OPERATOR_DIV = 3;
+
+    public static final int OPERATOR = 1;
+    public static final int OPERAND1 = 0;
+    public static final int OPERAND2 = 2;
 
     public int operatorArray[]= {0,0,0,0};
     public char operatorStringArray[]= {'+','-','*','/'};
@@ -34,12 +39,17 @@ public class Question implements Serializable {
         return new Question(operator, op1, op2);
     }
 
-    public double getResult() {
-        double plus = operatorArray[OPERATOR_PLUS] * (op1 + op2);
-        double minus = operatorArray[OPERATOR_MINUS] * (op1 - op2);
-        double mul = operatorArray[OPERATOR_MUL] * (op1 * op2);
-        double div = operatorArray[OPERATOR_DIV] * (op1 / op2);
+    public float getResult() {
+        float plus = operatorArray[OPERATOR_PLUS] * (op1 + op2);
+        float minus = operatorArray[OPERATOR_MINUS] * (op1 - op2);
+        float mul = operatorArray[OPERATOR_MUL] * (op1 * op2);
+        float div = operatorArray[OPERATOR_DIV] * (op1 / op2);
         return  plus + minus + mul + div;
+    }
+
+    public Question parseQuestion(String questionString) {
+        String[] splitQuestion = questionString.split(" ");
+        return new Question(Integer.valueOf(splitQuestion[OPERATOR]), Integer.valueOf(splitQuestion[OPERAND1]), Integer.valueOf(splitQuestion[OPERAND2]));
     }
 
     public void printQuestion() {
