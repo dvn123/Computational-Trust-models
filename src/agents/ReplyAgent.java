@@ -7,9 +7,7 @@ import util.Question;
 import java.util.ArrayList;
 
 public abstract class ReplyAgent extends Agent {
-    ArrayList<FIREInteraction> interactions;
-
-
+    ArrayList<FIREInteraction> bestInteractions;
 
     abstract float reply(Question q);
 }
