@@ -47,11 +47,6 @@ public class Question implements Serializable {
         return  plus + minus + mul + div;
     }
 
-    public Question parseQuestion(String questionString) {
-        String[] splitQuestion = questionString.split(" ");
-        return new Question(Integer.valueOf(splitQuestion[OPERATOR]), Integer.valueOf(splitQuestion[OPERAND1]), Integer.valueOf(splitQuestion[OPERAND2]));
-    }
-
     public void printQuestion() {
         System.out.println("Q: " + op1 + " " + operatorStringArray[operator] + " " + op2);
     }
