@@ -1,11 +1,13 @@
 import jade.core.Runtime; 
 import jade.core.Profile; 
 import jade.core.ProfileImpl; 
-import jade.wrapper.*; 
+import jade.wrapper.*;
+import java.sql.*;
+
 
 public class Main {
-
     public static void main(String[] args) {
+
     	// Get a hold on JADE runtime 
     	Runtime rt = Runtime.instance(); 
     	// Create a default profile 
@@ -15,9 +17,9 @@ public class Main {
     	ContainerController cc = rt.createMainContainer(p); 
     	// Create a new agent, a DummyAgent 
     	// and pass it a reference to an Object 
-//    	Object reference = new Object(); 
-//    	Object args2[] = new Object[1]; 
-//    	args2[0]=reference; 
+		//Object reference = new Object();
+		//Object args2[] = new Object[1];
+		//args2[0]=reference;
     	AgentController dummy;
 		try {
 			dummy = cc.createNewAgent("inProcess", 
@@ -33,4 +35,6 @@ public class Main {
 
         
     }
+
+		//  Database credentials
 }
