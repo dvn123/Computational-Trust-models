@@ -1,6 +1,6 @@
 package agents;
 
-import sun.management.Agent;
+import jade.core.Agent;
 import util.FIREInteraction;
 import util.Question;
 
