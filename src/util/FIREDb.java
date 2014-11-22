@@ -5,9 +5,6 @@ import agents.ReplyAgent;
 
 import java.util.ArrayList;
 
-/**
- * Created by diogo on 11-11-2014.
- */
 public class FIREDb {
     private static ArrayList<FIREInteraction> interactions;
 
