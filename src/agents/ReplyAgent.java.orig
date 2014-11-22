@@ -1,22 +1,21 @@
 package agents;
 
+<<<<<<< HEAD
 import jade.core.Agent;
+import util.FIREInteraction;
+=======
 import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
 import jade.domain.FIPANames;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.FailureException;
-import jade.domain.FIPAAgentManagement.NotUnderstoodException;
-import jade.domain.FIPAAgentManagement.RefuseException;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
-
-import java.util.Random;
-
+import jade.core.Agent;
+>>>>>>> 111780af587a65672f757f6623fbbd898cfd10d4
 import util.Question;
+import java.util.Random;
 
 public class ReplyAgent extends Agent {
     public static final int MAX = 100;
