@@ -28,21 +28,19 @@ package agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.SequentialBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
 import jade.domain.FIPANames;
-import jade.domain.FIPAAgentManagement.FailureException;
-import jade.domain.FIPAAgentManagement.NotUnderstoodException;
-import jade.domain.FIPAAgentManagement.RefuseException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import jade.proto.AchieveREInitiator;
-import jade.proto.AchieveREResponder;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Vector;
 
+import util.Constants;
 import util.Question;
 
 /**
@@ -56,11 +54,49 @@ import util.Question;
  */
 public class Fire extends Agent {
 
-	MessageTemplate template = MessageTemplate.and(
-			MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
-			MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
+	protected void setup() {
+		String serviceName = Constants.SERVICE_DESCRIPTION_TYPE_PLAYER + " player";
+		// Read the name of the service to register as an argument
+		Object[] args = getArguments();
+		
+		registerPlayer(serviceName, args);
 
-	private class AnswearingBehaviour extends CyclicBehaviour{
+		System.out.println("Agent "+getLocalName()+" waiting for requests...");
+
+		addBehaviour(new AnswearingBehaviour(this));
+	}
+
+	private void registerPlayer(String serviceName, Object[] args) {
+		if (args != null && args.length > 0) {
+			serviceName = (String) args[0];
+		}
+
+		// Register the service
+		System.out.println("Agent "+getLocalName()+" registering service \""+serviceName+"\" of type \"" + Constants.SERVICE_DESCRIPTION_TYPE_PLAYER + "\"");
+		try {
+			DFAgentDescription dfd = new DFAgentDescription();
+			dfd.setName(getAID());
+			ServiceDescription sd = new ServiceDescription();
+			sd.setName(serviceName);
+			sd.setType(Constants.SERVICE_DESCRIPTION_TYPE_PLAYER);
+			// Agents that want to use this service need to "know" the weather-forecast-ontology
+			sd.addOntologies(Constants.SERVICE_DESCRIPTION_ONTOLOGY_PLAYER);
+			// Agents that want to use this service need to "speak" the FIPA-SL language
+			/*sd.addLanguages(FIPANames.ContentLanguage);
+	  		sd.addProperties(new Property("country", "Italy"));*/
+			dfd.addServices(sd);
+
+			DFService.register(this, dfd);
+		}
+		catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+	}
+
+	private class AnswearingBehaviour extends CyclicBehaviour {
+		MessageTemplate template = MessageTemplate.and(
+				MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
+				MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
 
 		public AnswearingBehaviour(Agent x) {
 			super(x);
@@ -115,9 +151,9 @@ public class Fire extends Agent {
 				agree.setPerformative(ACLMessage.INFORM);
 
 				send(agree);
-				
+
 				ACLMessage ok = blockingReceive(MessageTemplate.MatchOntology("solution"),50000);
-				
+
 				if (ok.getPerformative() == ACLMessage.CONFIRM)
 					System.out.println("FIRE SAYS: Answer is correct");
 				else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
@@ -131,114 +167,6 @@ public class Fire extends Agent {
 
 
 		}
-	}
-
-	protected void setup() {
-		System.out.println("Agent "+getLocalName()+" waiting for requests...");
-
-		addBehaviour(new AnswearingBehaviour(this));
-		/*SequentialBehaviour sb = new SequentialBehaviour();
-
-		addBehaviour(sb);
-
-		sb.addSubBehaviour(new AchieveREResponder(this, template) {
-			protected ACLMessage prepareResponse(ACLMessage request) throws NotUnderstoodException, RefuseException {
-				System.out.println("Agent "+getLocalName()+": REQUEST received from "+request.getSender().getName() + " type: " + request.getPerformative()); //+". Action is "+request.getContent());
-
-
-				Question x = null;
-				try {
-					x = (Question) request.getContentObject();
-					x.printQuestion();
-				} catch (UnreadableException e) {
-					e.printStackTrace();
-				}
-
-
-				// Fill the REQUEST message
-				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-
-				msg.addReceiver(new AID((String) "sabio" , AID.ISLOCALNAME));
-
-				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-				// We want to receive a reply in 10 secs
-				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
-				msg.setContent("dummy-action");
-				msg.setOntology("oioi");
-
-				try {
-					msg.setContentObject(x);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				send(msg);
-
-				ACLMessage hey = blockingReceive(MessageTemplate.MatchOntology("oioi"),50000);
-
-				if (checkAction()) {
-					// We agree to perform the action. Note that in the FIPA-Request
-					// protocol the AGREE message is optional. Return null if you
-					// don't want to send it.
-					System.out.println("Agent "+getLocalName()+": Agree");
-					ACLMessage agree = request.createReply();
-
-					double y;
-					try {
-						y = (Double) hey.getContentObject();
-						agree.setContentObject(new Double(y));
-						System.out.println("FIRE: Received from sabio: " + y);
-					} catch (UnreadableException e) {
-
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					agree.setPerformative(ACLMessage.INFORM);
-
-					return agree;
-				}
-				else {
-					// We refuse to perform the action
-					System.out.println("Agent "+getLocalName()+": Refuse");
-					throw new RefuseException("check-failed");
-				}
-			}
-			protected void handleInform(ACLMessage inform) {
-
-				System.out.println("Agent "+inform.getSender().getName()+" successfully performed the requested action");
-				try {
-					System.out.println("Fire: Result returned: " + ((Double) inform.getContentObject()));
-				} catch (UnreadableException e) {
-					System.err.println("MANELAERROR");
-					e.printStackTrace();
-				}
-			}
-
-			protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-				if (performAction()) {
-					System.out.println("Agent "+getLocalName()+": Action successfully performed");
-					ACLMessage inform = request.createReply();
-					inform.setPerformative(ACLMessage.INFORM);
-					return inform;
-				}
-				else {
-					System.out.println("Agent "+getLocalName()+": Action failed");
-					throw new FailureException("unexpected-error");
-				}
-			}
-		} );*/
-	}
-
-	private boolean checkAction() {
-		// Simulate a check by generating a random number
-		return true;//(Math.random() > 0.2);
-	}
-
-	private boolean performAction() {
-		// Simulate action execution by generating a random number
-		return (Math.random() > 0.2);
 	}
 }
 

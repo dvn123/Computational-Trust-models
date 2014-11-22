@@ -17,17 +17,27 @@ public class Question implements Serializable {
     public static final int OPERAND1 = 0;
     public static final int OPERAND2 = 2;
 
-    public int operatorArray[]= {0,0,0,0};
-    public char operatorStringArray[]= {'+','-','*','/'};
-    public int operator;
-    public int op1, op2;
+    private int operatorArray[]= {0,0,0,0};
+    private char operatorStringArray[]= {'+','-','*','/'};
+    private int operator;
+   
 
-    Question(int operator, int op1, int op2) {
+	private int op1, op2;
+	
+	private static int ID = 0;
+	private int id; //each question has an id
+
+    
+
+	Question(int operator, int op1, int op2) {
         this.operator = operator;
         this.operatorArray[operator] = 1;
         this.op1 = op1;
         this.op2 = op2;
+        setID();
     }
+
+	
 
     public static Question generateQuestion() {
         Random rand = new Random();
@@ -50,4 +60,17 @@ public class Question implements Serializable {
     public void printQuestion() {
         System.out.println("Q: " + op1 + " " + operatorStringArray[operator] + " " + op2);
     }
+    
+    public int getOperator() {
+		return operator;
+	}
+    
+    private void setID() {
+		this.id = ID;
+        ID++;
+	}
+    
+    public int getId() {
+		return id;
+	}
 }

@@ -37,7 +37,7 @@ public class ReplyAgent extends Agent {
     float reply(Question q) {
         Random rand = new Random();
         float factor = -1;
-        factor = knowledge[q.operator];
+        factor = knowledge[q.getOperator()];
         return q.getResult()*factor + (1-factor)*(rand.nextInt((MAX - MIN) + 1) + MIN);
 
     }
