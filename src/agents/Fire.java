@@ -32,13 +32,17 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import jade.util.leap.Iterator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 import util.Constants;
 import util.Question;
@@ -53,13 +57,18 @@ import util.Question;
  @author Giovanni Caire - TILAB
  */
 public class Fire extends Agent {
+	private ArrayList<AID> wiseAgents = null;
+	
 
 	protected void setup() {
-		String serviceName = Constants.SERVICE_DESCRIPTION_TYPE_PLAYER + " player";
+		String serviceName = Constants.SERVICE_NAME_PLAYER;
 		// Read the name of the service to register as an argument
 		Object[] args = getArguments();
 		
+		//Find wise agents
 		registerPlayer(serviceName, args);
+		wiseAgents = getWiseAgents();
+		
 
 		System.out.println("Agent "+getLocalName()+" waiting for requests...");
 
@@ -92,6 +101,58 @@ public class Fire extends Agent {
 			fe.printStackTrace();
 		}
 	}
+	
+	private ArrayList<AID> getWiseAgents() {
+		ArrayList<AID> agentsFound = new ArrayList<AID>();
+		
+		System.out.println("Agent "+getLocalName()+" searching for wise agents...");
+		
+		try {
+			// Build the description used as template for the search
+			DFAgentDescription template = new DFAgentDescription();
+			ServiceDescription templateSd = new ServiceDescription();
+			templateSd.setType(Constants.SERVICE_DESCRIPTION_TYPE_WISE);
+			template.addServices(templateSd);
+
+			SearchConstraints sc = new SearchConstraints();
+			// We want to receive 10 results at most
+			sc.setMaxResults(new Long(10));
+
+			DFAgentDescription[] results = DFService.search(this, template, sc);
+			if (results.length > 0) {
+				System.out.println("Agent "+getLocalName()+" found the following "+Constants.SERVICE_DESCRIPTION_TYPE_WISE + " services:");
+				for (int i = 0; i < results.length; ++i) {
+					DFAgentDescription dfd = results[i];
+					AID provider = dfd.getName();
+					// The same agent may provide several services; we are only interested
+					// in the SERVICE_DESCRIPTION_TYPE_PLAYER one
+					Iterator it = dfd.getAllServices();
+					while (it.hasNext()) {
+						ServiceDescription sd = (ServiceDescription) it.next();
+						if (sd.getType().equals(Constants.SERVICE_DESCRIPTION_TYPE_WISE)) {
+							System.out.println("- Service \""+sd.getName()+"\" provided by wise agent "+provider.getName());
+							agentsFound.add(provider);
+						}
+					}
+				}
+			}	
+			else {
+				System.out.println("Agent "+getLocalName()+" did not find any players");
+			}
+		}
+		catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+		return agentsFound;
+	} 
+
+	private AID getBestAgent(Question question) {
+		//taking care question type do something
+		
+		Random x = new Random();
+		int index = x.nextInt(wiseAgents.size());
+		return wiseAgents.get(index);
+	}
 
 	private class AnswearingBehaviour extends CyclicBehaviour {
 		MessageTemplate template = MessageTemplate.and(
@@ -121,7 +182,8 @@ public class Fire extends Agent {
 				// Fill the REQUEST message
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 
-				msg.addReceiver(new AID((String) "sabio" , AID.ISLOCALNAME));
+				//Algorithm to 
+				msg.addReceiver(getBestAgent(x));
 
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				// We want to receive a reply in 10 secs
@@ -152,7 +214,7 @@ public class Fire extends Agent {
 
 				send(agree);
 
-				ACLMessage ok = blockingReceive(MessageTemplate.MatchOntology("solution"),50000);
+				ACLMessage ok = blockingReceive(MessageTemplate.MatchOntology(Constants.SOLUTION_ONTOLOGY),50000);
 
 				if (ok.getPerformative() == ACLMessage.CONFIRM)
 					System.out.println("FIRE SAYS: Answer is correct");

@@ -26,14 +26,19 @@ package agents;
  */
 
 import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
 import jade.domain.FIPANames;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
+import util.Constants;
 import util.Question;
 
 /**
@@ -45,9 +50,13 @@ import util.Question;
  failures.
  @author Giovanni Caire - TILAB
  */
+
 public class Sabio extends Agent {
 
 	protected void setup() {
+		
+		registerWise();
+		
 		System.out.println("Agent "+getLocalName()+" waiting for requests...");
 		MessageTemplate template = MessageTemplate.and(
 				MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
@@ -65,7 +74,6 @@ public class Sabio extends Agent {
 					e.printStackTrace();
 				}
 
-				if (checkAction()) {
 					// We agree to perform the action. Note that in the FIPA-Request
 					// protocol the AGREE message is optional. Return null if you
 					// don't want to send it.
@@ -78,12 +86,7 @@ public class Sabio extends Agent {
 					agree.setPerformative(ACLMessage.INFORM);
 
 					return agree;
-				}
-				else {
-					// We refuse to perform the action
-					System.out.println("Agent "+getLocalName()+": Refuse");
-					throw new RefuseException("check-failed");
-				}
+		
 			}
 
 
@@ -102,14 +105,32 @@ public class Sabio extends Agent {
 		} );
 	}
 
-	private boolean checkAction() {
-		// Simulate a check by generating a random number
-		return true;//(Math.random() > 0.2);
-	}
-
 	private boolean performAction() {
 		// Simulate action execution by generating a random number
 		return (Math.random() > 0.2);
+	}
+	
+	private void registerWise() {
+			String serviceName = Constants.SERVICE_NAME_WISE;
+
+		// Register the service
+		System.out.println("Agent "+getLocalName()+" registering service \""+serviceName+"\" of type \"" + Constants.SERVICE_DESCRIPTION_TYPE_WISE + "\"");
+		
+		try {
+			DFAgentDescription dfd = new DFAgentDescription();
+			dfd.setName(getAID());
+			ServiceDescription sd = new ServiceDescription();
+			sd.setName(serviceName);
+			sd.setType(Constants.SERVICE_DESCRIPTION_TYPE_WISE);
+			// Agents that want to use this service need to "know" the weather-forecast-ontology
+			sd.addOntologies(Constants.SERVICE_DESCRIPTION_ONTOLOGY_WISE);
+			dfd.addServices(sd);
+
+			DFService.register(this, dfd);
+		}
+		catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
 	}
 }
 
