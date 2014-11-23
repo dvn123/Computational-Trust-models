@@ -31,7 +31,7 @@ public class Manela extends Agent {
 		if (players != null && players.size() > 0)
 			addBehaviour(new QuestioningBehaviour(this, players));
 		else
-			System.out.println("No players found.");
+			writeMsg("No players found.");
 	}
 
 
@@ -39,7 +39,7 @@ public class Manela extends Agent {
 	private ArrayList<AID> getPlayers() {
 		ArrayList<AID> agentsFound = new ArrayList<AID>();
 		
-		System.out.println("Agent "+getLocalName()+" searching for players...");
+		writeMsg("searching for players...");
 		
 		try {
 			// Build the description used as template for the search
@@ -54,7 +54,7 @@ public class Manela extends Agent {
 
 			DFAgentDescription[] results = DFService.search(this, template, sc);
 			if (results.length > 0) {
-				System.out.println("Agent "+getLocalName()+" found the following "+Constants.SERVICE_DESCRIPTION_TYPE_PLAYER+" services:");
+				writeMsg("found the following "+Constants.SERVICE_DESCRIPTION_TYPE_PLAYER+" services:");
 				for (int i = 0; i < results.length; ++i) {
 					DFAgentDescription dfd = results[i];
 					AID provider = dfd.getName();
@@ -64,14 +64,14 @@ public class Manela extends Agent {
 					while (it.hasNext()) {
 						ServiceDescription sd = (ServiceDescription) it.next();
 						if (sd.getType().equals(Constants.SERVICE_DESCRIPTION_TYPE_PLAYER)) {
-							System.out.println("- Service \""+sd.getName()+"\" provided by player "+provider.getName());
+							writeMsg("- Service \""+sd.getName()+"\" provided by player "+provider.getName());
 							agentsFound.add(provider);
 						}
 					}
 				}
 			}	
 			else {
-				System.out.println("Agent "+getLocalName()+" did not find any players");
+				writeMsg("Did not find any players");
 			}
 		}
 		catch (FIPAException fe) {
@@ -79,6 +79,10 @@ public class Manela extends Agent {
 		}
 		return agentsFound;
 	} 
+	
+	private void writeMsg(String msg) {
+		System.out.println("Agent "+ getLocalName() + ": " + msg);
+	}
 
 	private class QuestioningBehaviour extends CyclicBehaviour {
 		ArrayList<AID> players;
@@ -98,7 +102,7 @@ public class Manela extends Agent {
 
 			if (players != null && players.size() > 0) {
 				nResponders = players.size();
-				System.out.println("Questioning "+nResponders+" responders.");
+				writeMsg("Questioning "+nResponders+" responders.");
 
 				// Fill the REQUEST message
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
@@ -124,16 +128,16 @@ public class Manela extends Agent {
 				//TODO: NEED to change to wait for multiple players 
 				ACLMessage answer = blockingReceive(template, 10000);
 
-				System.out.println("Agent "+answer.getSender().getName()+" successfully performed the requested action");
+				writeMsg("Agent "+answer.getSender().getLocalName()+" successfully performed the requested action");
 				
 				double result = Double.parseDouble(answer.getContent());
-				System.out.println("MANELA: Result returned: " + result);
+				writeMsg("Result returned by " + answer.getSender().getLocalName() + ": " + result);
 
 				ACLMessage reply = answer.createReply();
 				reply.setOntology(Constants.SOLUTION_ONTOLOGY);
 
 				reply.setPerformative(result == question.getResult() ? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
-				System.out.println("MANELA: Sending solution");
+				writeMsg("Sending solution to " + answer.getSender().getLocalName());
 				send(reply);
 			}
 			try {

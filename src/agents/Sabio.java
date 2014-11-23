@@ -41,15 +41,6 @@ import jade.proto.AchieveREResponder;
 import util.Constants;
 import util.Question;
 
-/**
- This example shows how to implement the responder role in
- a FIPA-request interaction protocol. In this case in particular
- we use an <code>AchieveREResponder</code> ("Achieve Rational effect")
- to serve requests to perform actions from other agents. We use a
- random generator to simulate request refusals and action execution
- failures.
- @author Giovanni Caire - TILAB
- */
 
 public class Sabio extends Agent {
 
@@ -57,14 +48,14 @@ public class Sabio extends Agent {
 		
 		registerWise();
 		
-		System.out.println("Agent "+getLocalName()+" waiting for requests...");
+		writeMsg("waiting for requests...");
 		MessageTemplate template = MessageTemplate.and(
 				MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
 				MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
 
 		addBehaviour(new AchieveREResponder(this, template) {
 			protected ACLMessage prepareResponse(ACLMessage request) throws NotUnderstoodException, RefuseException {
-				System.out.println("Agent "+getLocalName()+": REQUEST received from "+request.getSender().getName()); //+". Action is "+request.getContent());
+				writeMsg("REQUEST received from "+request.getSender().getLocalName()); //+". Action is "+request.getContent());
 
 				Question x = null;
 				try {
@@ -77,10 +68,10 @@ public class Sabio extends Agent {
 					// We agree to perform the action. Note that in the FIPA-Request
 					// protocol the AGREE message is optional. Return null if you
 					// don't want to send it.
-					System.out.println("Agent "+getLocalName()+": Agree");
+					writeMsg("Agree");
 					ACLMessage agree = request.createReply();
 					if(x != null) {
-						System.out.println("Sabio result: " + Double.toString(x.getResult()));
+						writeMsg("result: " + Double.toString(x.getResult()));
 						agree.setContent(Double.toString(x.getResult()));
 					}
 					agree.setPerformative(ACLMessage.INFORM);
@@ -92,13 +83,13 @@ public class Sabio extends Agent {
 
 			protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
 				if (performAction()) {
-					System.out.println("Agent "+getLocalName()+": Action successfully performed");
+					writeMsg("Action successfully performed");
 					ACLMessage inform = request.createReply();
 					inform.setPerformative(ACLMessage.INFORM);
 					return inform;
 				}
 				else {
-					System.out.println("Agent "+getLocalName()+": Action failed");
+					writeMsg("Action failed");
 					throw new FailureException("unexpected-error");
 				}
 			}
@@ -114,7 +105,7 @@ public class Sabio extends Agent {
 			String serviceName = Constants.SERVICE_NAME_WISE;
 
 		// Register the service
-		System.out.println("Agent "+getLocalName()+" registering service \""+serviceName+"\" of type \"" + Constants.SERVICE_DESCRIPTION_TYPE_WISE + "\"");
+		writeMsg("registering service \""+serviceName+"\" of type \"" + Constants.SERVICE_DESCRIPTION_TYPE_WISE + "\"");
 		
 		try {
 			DFAgentDescription dfd = new DFAgentDescription();
@@ -131,6 +122,10 @@ public class Sabio extends Agent {
 		catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
+	}
+	
+	private void writeMsg(String msg) {
+		System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 }
 

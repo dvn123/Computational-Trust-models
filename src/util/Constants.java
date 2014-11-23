@@ -13,4 +13,5 @@ public class Constants {
 	static public String SERVICE_DESCRIPTION_ONTOLOGY_WISE = "QuemQuerSerMilionario-wise-ontology";
 	
 	static public String SOLUTION_ONTOLOGY = "solution";
+	static public String WISE_CONVERSATION_ONTOLOGY = "wise-conversation-ontology";
 }

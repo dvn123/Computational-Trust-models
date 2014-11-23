@@ -47,15 +47,7 @@ import java.util.Random;
 import util.Constants;
 import util.Question;
 
-/**
- This example shows how to implement the responder role in
- a FIPA-request interaction protocol. In this case in particular
- we use an <code>AchieveREResponder</code> ("Achieve Rational effect")
- to serve requests to perform actions from other agents. We use a
- random generator to simulate request refusals and action execution
- failures.
- @author Giovanni Caire - TILAB
- */
+
 public class Fire extends Agent {
 	private ArrayList<AID> wiseAgents = null;
 	
@@ -70,7 +62,7 @@ public class Fire extends Agent {
 		wiseAgents = getWiseAgents();
 		
 
-		System.out.println("Agent "+getLocalName()+" waiting for requests...");
+		writeMsg("waiting for requests...");
 
 		addBehaviour(new AnswearingBehaviour(this));
 	}
@@ -81,7 +73,7 @@ public class Fire extends Agent {
 		}
 
 		// Register the service
-		System.out.println("Agent "+getLocalName()+" registering service \""+serviceName+"\" of type \"" + Constants.SERVICE_DESCRIPTION_TYPE_PLAYER + "\"");
+		writeMsg("registering service \""+serviceName+"\" of type \"" + Constants.SERVICE_DESCRIPTION_TYPE_PLAYER + "\"");
 		try {
 			DFAgentDescription dfd = new DFAgentDescription();
 			dfd.setName(getAID());
@@ -105,7 +97,7 @@ public class Fire extends Agent {
 	private ArrayList<AID> getWiseAgents() {
 		ArrayList<AID> agentsFound = new ArrayList<AID>();
 		
-		System.out.println("Agent "+getLocalName()+" searching for wise agents...");
+		writeMsg("searching for wise agents...");
 		
 		try {
 			// Build the description used as template for the search
@@ -120,7 +112,7 @@ public class Fire extends Agent {
 
 			DFAgentDescription[] results = DFService.search(this, template, sc);
 			if (results.length > 0) {
-				System.out.println("Agent "+getLocalName()+" found the following "+Constants.SERVICE_DESCRIPTION_TYPE_WISE + " services:");
+				writeMsg("found the following "+Constants.SERVICE_DESCRIPTION_TYPE_WISE + " services:");
 				for (int i = 0; i < results.length; ++i) {
 					DFAgentDescription dfd = results[i];
 					AID provider = dfd.getName();
@@ -130,14 +122,14 @@ public class Fire extends Agent {
 					while (it.hasNext()) {
 						ServiceDescription sd = (ServiceDescription) it.next();
 						if (sd.getType().equals(Constants.SERVICE_DESCRIPTION_TYPE_WISE)) {
-							System.out.println("- Service \""+sd.getName()+"\" provided by wise agent "+provider.getName());
+							writeMsg("- Service \""+sd.getName()+"\" provided by wise agent "+provider.getName());
 							agentsFound.add(provider);
 						}
 					}
 				}
 			}	
 			else {
-				System.out.println("Agent "+getLocalName()+" did not find any players");
+				writeMsg("did not find any players");
 			}
 		}
 		catch (FIPAException fe) {
@@ -146,7 +138,7 @@ public class Fire extends Agent {
 		return agentsFound;
 	} 
 
-	private AID getBestAgent(Question question) {
+	private AID getBestWiseAgent(Question question) {
 		//taking care question type do something
 		
 		Random x = new Random();
@@ -168,7 +160,7 @@ public class Fire extends Agent {
 			ACLMessage request = myAgent.receive(template);
 
 			if (request != null) {
-				System.out.println("Agent "+getLocalName()+": REQUEST received from "+request.getSender().getName() + " type: " + request.getPerformative()); //+". Action is "+request.getContent());
+				writeMsg("REQUEST received from "+request.getSender().getLocalName() + " type: " + request.getPerformative()); //+". Action is "+request.getContent());
 
 				Question x = null;
 				try {
@@ -183,12 +175,12 @@ public class Fire extends Agent {
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 
 				//Algorithm to 
-				msg.addReceiver(getBestAgent(x));
+				msg.addReceiver(getBestWiseAgent(x));
 
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				// We want to receive a reply in 10 secs
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
-				msg.setOntology("oioi");
+				msg.setOntology(Constants.WISE_CONVERSATION_ONTOLOGY);
 
 				try {
 					msg.setContentObject(x);
@@ -197,18 +189,18 @@ public class Fire extends Agent {
 				}
 				send(msg);
 
-				ACLMessage hey = blockingReceive(MessageTemplate.MatchOntology("oioi"),50000);
+				ACLMessage wiseAnswer = blockingReceive(MessageTemplate.MatchOntology(Constants.WISE_CONVERSATION_ONTOLOGY),50000);
 
 				// We agree to perform the action. Note that in the FIPA-Request
 				// protocol the AGREE message is optional. Return null if you
 				// don't want to send it.
-				System.out.println("Agent "+getLocalName()+": Agree");
+				writeMsg("Agree");
 				ACLMessage agree = request.createReply();
 
 				double y;
-				y = Double.parseDouble(hey.getContent());
+				y = Double.parseDouble(wiseAnswer.getContent());
 				agree.setContent(Double.toString(y));
-				System.out.println("FIRE: Received from sabio: " + y);
+				writeMsg("Received from agent " + wiseAnswer.getSender().getLocalName()+ "sabio: " + y);
 
 				agree.setPerformative(ACLMessage.INFORM);
 
@@ -217,11 +209,11 @@ public class Fire extends Agent {
 				ACLMessage ok = blockingReceive(MessageTemplate.MatchOntology(Constants.SOLUTION_ONTOLOGY),50000);
 
 				if (ok.getPerformative() == ACLMessage.CONFIRM)
-					System.out.println("FIRE SAYS: Answer is correct");
+					writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
 				else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
-					System.out.println("FIRE SAYS: Answer is incorrect");
+					writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
 				else 
-					System.out.println("FIRE SAYS: estás tolo");
+					writeMsg(ok.getSender().getLocalName() + " - estás tolo");
 			}
 			else {
 				block();
@@ -229,6 +221,10 @@ public class Fire extends Agent {
 
 
 		}
+	}
+	
+	private void writeMsg(String msg) {
+		System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 }
 
