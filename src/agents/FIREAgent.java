@@ -44,7 +44,6 @@ public class FIREAgent extends BaseAnswerAgent {
         for (AID w: wiseAgents) {
             getScore(FIREDb.find(w, String.valueOf(question.getOperator()), this));
         }
-        FIREDb.find(question.getOperator(), this);
        // return wiseAgents.get(index);
     }
 }
