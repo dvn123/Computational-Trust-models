@@ -183,7 +183,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		else if (message.getPerformative() == ACLMessage.DISCONFIRM)
 			writeMsg(message.getSender().getLocalName() + " - Answer is incorrect");
 		else 
-			writeMsg(message.getSender().getLocalName() + " - estás tolo");
+			writeMsg(message.getSender().getLocalName() + " - estas tolo");
 		
 		AID agentResponsable;
 		try {
