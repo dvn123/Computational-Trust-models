@@ -2,7 +2,6 @@ package agents;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import util.Question;
 import jade.core.AID;
@@ -133,49 +132,69 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private AID chooseBestAgent(int type) {
 		
-		//TODO: escolher o melhor agente e retornar
-		
 		switch (type)
 		{
 			case Question.OPERATOR_PLUS:
-				
-				break;
+				return compareAndReturnBestAgent(addition);
 			case Question.OPERATOR_MINUS:
-				
-				break;
+				return compareAndReturnBestAgent(subtraction);
 			case Question.OPERATOR_MUL:
-				
-				break;
+				return compareAndReturnBestAgent(multiplication);
 			case Question.OPERATOR_DIV:
-				
-				
-				break;
+				return compareAndReturnBestAgent(division);
 			default:
 				System.out.println("Invalid type!");
 				break;
 		}
-		
-		return wiseAgents.get(0);
+		return null;
 	}
 	
-	protected void handleSolution(ACLMessage ok) {
-		if (ok.getPerformative() == ACLMessage.CONFIRM)
-			writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
-		else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
-			writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
-		else 
-			writeMsg(ok.getSender().getLocalName() + " - estás tolo");
+	private AID compareAndReturnBestAgent(Map<AID, float[]> agents) {
 		
-		//TODO: atualizar agente
+		//TODO: caso em que s�o os valores todos iguais? que fazer?
+		
+		AID best=null;
+		float bestValue = 0, currentValue;
+		boolean firstValue=true;
+		
+		for (AID key : agents.keySet()) {
+			
+			if(firstValue) {
+				best=key;
+				bestValue=agents.get(key)[SINALPHA_POS];
+			} else {
+				
+				currentValue=agents.get(key)[SINALPHA_POS];
+				
+				if(currentValue>bestValue) {
+					bestValue=agents.get(key)[SINALPHA_POS];
+					best=key;
+				}
+			}
+		}
+		return best;
+	}
+
+	protected void handleSolution(ACLMessage message) {
+		
+		if (message.getPerformative() == ACLMessage.CONFIRM)
+			writeMsg(message.getSender().getLocalName() + " - Answer is correct");
+		else if (message.getPerformative() == ACLMessage.DISCONFIRM)
+			writeMsg(message.getSender().getLocalName() + " - Answer is incorrect");
+		else 
+			writeMsg(message.getSender().getLocalName() + " - estás tolo");
+		
+		AID agentResponsable = questions.get(Integer.parseInt(message.getContent()));
+		calculateAlgorithmSteps(agentResponsable, 0, message);
+		//TODO:como saber o type??
 	}
 	
 	protected AID getBestWiseAgent(Question question) {
 		
-		AID result = chooseBestAgent(question.getOperator());
-		
-		//TODO: adicionar result e idQuestion ao map
-		
-		return result;
+		AID bestAgent = chooseBestAgent(question.getOperator());
+		questions.put(question.getId(), bestAgent);
+			
+		return bestAgent;
 	}
 	
 }
