@@ -49,7 +49,7 @@ import util.Question;
 
 
 public class BaseAnswerAgent extends Agent {
-	private ArrayList<AID> wiseAgents = null;
+	protected ArrayList<AID> wiseAgents = null;
 	
 
 	protected void setup() {
