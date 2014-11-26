@@ -187,6 +187,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		AID agentResponsable = questions.get(Integer.parseInt(message.getContent()));
 		calculateAlgorithmSteps(agentResponsable, 0, message);
 		//TODO:como saber o type??
+		//TODO: limpar o map?
 	}
 	
 	protected AID getBestWiseAgent(Question question) {
