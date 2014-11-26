@@ -140,6 +140,13 @@ public class QuestionAgent extends Agent {
 
 					reply.setPerformative(result == question.getResult() ? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
 					reply.setContent(Integer.toString(question.getId()));
+					
+					try {
+						reply.setContentObject(question);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
 					writeMsg("Sending solution to " + answer.getSender().getLocalName());
 					send(reply);
 				}
