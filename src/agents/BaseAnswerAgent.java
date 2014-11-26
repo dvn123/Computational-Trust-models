@@ -49,7 +49,7 @@ import util.Question;
 
 
 public class BaseAnswerAgent extends Agent {
-	private ArrayList<AID> wiseAgents = null;
+	protected ArrayList<AID> wiseAgents = null;
 	
 
 	protected void setup() {
@@ -138,7 +138,7 @@ public class BaseAnswerAgent extends Agent {
 		return agentsFound;
 	} 
 
-	private AID getBestWiseAgent(Question question) {
+	protected AID getBestWiseAgent(Question question) {
 		//taking care question type do something
 		
 		Random x = new Random();
@@ -214,21 +214,19 @@ public class BaseAnswerAgent extends Agent {
 			else {
 				block();
 			}
-
-
-		}
-
-		private void handleSolution(ACLMessage ok) {
-			if (ok.getPerformative() == ACLMessage.CONFIRM)
-				writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
-			else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
-				writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
-			else 
-				writeMsg(ok.getSender().getLocalName() + " - estás tolo");
 		}
 	}
 	
-	private void writeMsg(String msg) {
+	protected void handleSolution(ACLMessage ok) {
+		if (ok.getPerformative() == ACLMessage.CONFIRM)
+			writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
+		else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
+			writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
+		else 
+			writeMsg(ok.getSender().getLocalName() + " - estás tolo");
+	}
+	
+	protected void writeMsg(String msg) {
 		System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 }
