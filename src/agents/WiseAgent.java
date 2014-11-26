@@ -41,10 +41,66 @@ import jade.proto.AchieveREResponder;
 import util.Constants;
 import util.Question;
 
+import java.util.Random;
+
 
 public class WiseAgent extends Agent {
+    public static final int MAX = 100;
+    public static final int MIN = 0;
+
+    float[] knowledge;
+
+    float[] tiredness;
+    int[] question_latest;
+
+    float tiredness_factor;
+    int tiredness_rest_limit;
+    float tiredness_restored_per_rest;
+
+    float reply(Question q) {
+        Random rand = new Random();
+        float knowledge_loc = knowledge[q.getOperator()] - tiredness[q.getOperator()];
+        updateTiredness(q);
+        if(rand.nextFloat() < knowledge_loc) {
+            return q.getResult();
+        } else {
+            return q.getResult()*knowledge_loc + (1-knowledge_loc)*(rand.nextInt((MAX - MIN) + 1) + MIN);
+        }
+    }
+
+    void updateTiredness(Question q) {
+        question_latest[q.getOperator()] = 0;
+        question_latest[(q.getOperator() + 1)%4]++;
+        question_latest[(q.getOperator() + 2)%4]++;
+        question_latest[(q.getOperator() + 3)%4]++;
+
+        for(int i = 0; i < question_latest.length; i++) {
+            if(question_latest[i] > tiredness_rest_limit) {
+                tiredness[i] = (tiredness[i] - tiredness_restored_per_rest) < 0 ? 0 : tiredness[i] - tiredness_restored_per_rest;
+            }
+        }
+
+        tiredness[q.getOperator()] = tiredness[q.getOperator()] + tiredness_factor;
+    }
 
 	protected void setup() {
+        Random rand = new Random();
+
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            knowledge = new float[] {Float.valueOf((String) args[0]), Float.valueOf((String) args[1]), Float.valueOf((String) args[2]), Float.valueOf((String) args[3])};
+            tiredness_restored_per_rest = Float.valueOf((String) args[4]);
+            tiredness_factor = Float.valueOf((String) args[5]);
+            tiredness_rest_limit = Integer.valueOf((String) args[6]);
+        } else {
+            knowledge = new float[] {rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), rand.nextFloat()};
+            tiredness_restored_per_rest = (float) 0.02;
+            tiredness_factor = (float) 0.01;
+            tiredness_rest_limit = 5;
+        }
+
+        tiredness = new float[] {0,0,0,0};
+        question_latest = new int[] {999,999,999,999};
 		
 		registerWise();
 		
@@ -71,8 +127,8 @@ public class WiseAgent extends Agent {
 					writeMsg("Agree");
 					ACLMessage agree = request.createReply();
 					if(x != null) {
-						writeMsg("result: " + Double.toString(x.getResult()));
-						agree.setContent(Double.toString(x.getResult()));
+						writeMsg("result: " + Float.toString(reply(x)));
+						agree.setContent(Float.toString(reply(x)));
 					}
 					agree.setPerformative(ACLMessage.INFORM);
 

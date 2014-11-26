@@ -43,13 +43,12 @@ public class ReplyAgent extends Agent {
             knowledge = new Float[] {rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), rand.nextFloat()};
         }
 
-
         try {
             DFAgentDescription dfd = new DFAgentDescription();
             dfd.setName(getAID());
             ServiceDescription sd = new ServiceDescription();
-            sd.setName(Constants.SERVICE_DESCRIPTION_ONTOLOGY_PLAYER);
-            sd.setType(Constants.SERVICE_DESCRIPTION_ONTOLOGY_INFORMATION_SOURCE_FIRE);
+            sd.setName(Constants.SERVICE_DESCRIPTION_ONTOLOGY_WISE);
+            sd.setType(Constants.SERVICE_DESCRIPTION_TYPE_WISE);
             sd.addLanguages(FIPANames.ContentLanguage.FIPA_SL);
             dfd.addServices(sd);
             DFService.register(this, dfd);
