@@ -126,7 +126,7 @@ public class QuestionAgent extends Agent {
 
 				send(msg);
 
-				//TODO: NEED to change to wait for multiple players
+				//wait for multiple players
 				for (int i = 0; i < players.size(); ++i) {
 					ACLMessage answer = blockingReceive(template, 10000);
 
