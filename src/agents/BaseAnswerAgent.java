@@ -48,7 +48,7 @@ import util.Constants;
 import util.Question;
 
 
-public class Fire extends Agent {
+public class BaseAnswerAgent extends Agent {
 	private ArrayList<AID> wiseAgents = null;
 	
 
@@ -207,19 +207,24 @@ public class Fire extends Agent {
 				send(agree);
 
 				ACLMessage ok = blockingReceive(MessageTemplate.MatchOntology(Constants.SOLUTION_ONTOLOGY),50000);
-
-				if (ok.getPerformative() == ACLMessage.CONFIRM)
-					writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
-				else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
-					writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
-				else 
-					writeMsg(ok.getSender().getLocalName() + " - estás tolo");
+				
+				//taking care of the answer
+				handleSolution(ok);
 			}
 			else {
 				block();
 			}
 
 
+		}
+
+		private void handleSolution(ACLMessage ok) {
+			if (ok.getPerformative() == ACLMessage.CONFIRM)
+				writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
+			else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
+				writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
+			else 
+				writeMsg(ok.getSender().getLocalName() + " - estás tolo");
 		}
 	}
 	

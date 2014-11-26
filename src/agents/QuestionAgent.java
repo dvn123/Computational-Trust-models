@@ -21,13 +21,13 @@ import util.Constants;
 import util.Question;
 
 
-public class Manela extends Agent {
+public class QuestionAgent extends Agent {
 	private Question question;
 
 	protected void setup() {
 		ArrayList<AID> players = getPlayers(); //Search for players
 
-				
+
 		if (players != null && players.size() > 0)
 			addBehaviour(new QuestioningBehaviour(this, players));
 		else
@@ -38,9 +38,9 @@ public class Manela extends Agent {
 
 	private ArrayList<AID> getPlayers() {
 		ArrayList<AID> agentsFound = new ArrayList<AID>();
-		
+
 		writeMsg("searching for players...");
-		
+
 		try {
 			// Build the description used as template for the search
 			DFAgentDescription template = new DFAgentDescription();
@@ -79,7 +79,7 @@ public class Manela extends Agent {
 		}
 		return agentsFound;
 	} 
-	
+
 	private void writeMsg(String msg) {
 		System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
@@ -99,6 +99,7 @@ public class Manela extends Agent {
 
 		@Override
 		public void action() {
+			System.out.println("***********************************************************");
 
 			if (players != null && players.size() > 0) {
 				nResponders = players.size();
@@ -109,7 +110,7 @@ public class Manela extends Agent {
 				for (int i = 0; i < players.size(); ++i) {
 					msg.addReceiver(players.get(i)/*new AID((String) players[i], AID.ISLOCALNAME)*/);
 				}
-				
+
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				// We want to receive a reply in 10 secs
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
@@ -125,27 +126,32 @@ public class Manela extends Agent {
 
 				send(msg);
 
-				//TODO: NEED to change to wait for multiple players 
-				ACLMessage answer = blockingReceive(template, 10000);
+				//TODO: NEED to change to wait for multiple players
+				for (int i = 0; i < players.size(); ++i) {
+					ACLMessage answer = blockingReceive(template, 10000);
 
-				writeMsg("Agent "+answer.getSender().getLocalName()+" successfully performed the requested action");
-				
-				double result = Double.parseDouble(answer.getContent());
-				writeMsg("Result returned by " + answer.getSender().getLocalName() + ": " + result);
+					writeMsg("Agent "+answer.getSender().getLocalName()+" successfully performed the requested action");
 
-				ACLMessage reply = answer.createReply();
-				reply.setOntology(Constants.SOLUTION_ONTOLOGY);
+					double result = Double.parseDouble(answer.getContent());
+					writeMsg("Result returned by " + answer.getSender().getLocalName() + ": " + result);
 
-				reply.setPerformative(result == question.getResult() ? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
-				writeMsg("Sending solution to " + answer.getSender().getLocalName());
-				send(reply);
+					ACLMessage reply = answer.createReply();
+					reply.setOntology(Constants.SOLUTION_ONTOLOGY);
+
+					reply.setPerformative(result == question.getResult() ? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
+					writeMsg("Sending solution to " + answer.getSender().getLocalName());
+					send(reply);
+				}
 			}
+			System.out.println("***********************************************************");
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 		}
+		
 	}
 }
 

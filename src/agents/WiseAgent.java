@@ -42,7 +42,7 @@ import util.Constants;
 import util.Question;
 
 
-public class Sabio extends Agent {
+public class WiseAgent extends Agent {
 
 	protected void setup() {
 		
