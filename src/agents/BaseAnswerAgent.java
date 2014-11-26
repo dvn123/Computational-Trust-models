@@ -214,19 +214,17 @@ public class BaseAnswerAgent extends Agent {
 			else {
 				block();
 			}
-
-
-		}
-
-		private void handleSolution(ACLMessage ok) {
-			if (ok.getPerformative() == ACLMessage.CONFIRM)
-				writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
-			else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
-				writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
-			else 
-				writeMsg(ok.getSender().getLocalName() + " - estás tolo");
 		}
 	}
+
+    private void handleSolution(ACLMessage ok) {
+        if (ok.getPerformative() == ACLMessage.CONFIRM)
+            writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
+        else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
+            writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
+        else
+            writeMsg(ok.getSender().getLocalName() + " - estás tolo");
+    }
 	
 	private void writeMsg(String msg) {
 		System.out.println("Agent "+ getLocalName() + ": " + msg);
