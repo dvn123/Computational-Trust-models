@@ -126,7 +126,7 @@ public class QuestionAgent extends Agent {
 
 				send(msg);
 
-				//TODO: NEED to change to wait for multiple players
+				//wait for multiple players
 				for (int i = 0; i < players.size(); ++i) {
 					ACLMessage answer = blockingReceive(template, 10000);
 
@@ -139,6 +139,7 @@ public class QuestionAgent extends Agent {
 					reply.setOntology(Constants.SOLUTION_ONTOLOGY);
 
 					reply.setPerformative(result == question.getResult() ? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
+					reply.setContent(Integer.toString(question.getId()));
 					writeMsg("Sending solution to " + answer.getSender().getLocalName());
 					send(reply);
 				}
