@@ -139,6 +139,7 @@ public class QuestionAgent extends Agent {
 					reply.setOntology(Constants.SOLUTION_ONTOLOGY);
 
 					reply.setPerformative(result == question.getResult() ? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
+					reply.setContent(Integer.toString(question.getId()));
 					writeMsg("Sending solution to " + answer.getSender().getLocalName());
 					send(reply);
 				}
