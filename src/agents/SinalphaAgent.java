@@ -6,6 +6,7 @@ import java.util.Map;
 import util.Question;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 @SuppressWarnings("serial")
 public class SinalphaAgent extends BaseAnswerAgent {
@@ -184,10 +185,18 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		else 
 			writeMsg(message.getSender().getLocalName() + " - estás tolo");
 		
-		AID agentResponsable = questions.get(Integer.parseInt(message.getContent()));
-		calculateAlgorithmSteps(agentResponsable, 0, message);
-		//TODO:como saber o type??
-		//TODO: limpar o map?
+		AID agentResponsable;
+		try {
+			agentResponsable = questions.get(((Question) message.getContentObject()).getId());
+			
+			calculateAlgorithmSteps(agentResponsable, 
+					((Question) message.getContentObject()).getOperator(), message);
+			
+			questions.remove(((Question) message.getContentObject()).getId());
+					
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	protected AID getBestWiseAgent(Question question) {
