@@ -2,13 +2,25 @@ import jade.core.Runtime;
 import jade.core.Profile; 
 import jade.core.ProfileImpl; 
 import jade.wrapper.*;
+import util.Constants;
+import util.FIRERule;
+
 import java.sql.*;
 
 
 public class Main {
     public static void main(String[] args) {
+		Constants.roleValues.put("mathematician", new FIRERule("cs_student", (float) 1, (float) 1));
+		Constants.roleValues.put("high_school_dropout", new FIRERule("cs_student", (float) -0.5, (float) 0.2));
+		Constants.roleValues.put("neanderthal", new FIRERule("cs_student", (float) -1, (float) 1));
+		Constants.roleValues.put("cs_student", new FIRERule("cs_student", (float) 0.8, (float) 0.7));
+		Constants.roleValues.put("kind", new FIRERule("family_member", (float) 0.2, (float) 0.4));
+		Constants.roleValues.put("evil", new FIRERule("enemy", (float) -0.6, (float) 0.4));
 
-    	// Get a hold on JADE runtime 
+
+
+
+		// Get a hold on JADE runtime
     	Runtime rt = Runtime.instance(); 
     	// Create a default profile 
     	Profile p = new ProfileImpl(); 

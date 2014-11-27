@@ -1,5 +1,8 @@
 package util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Constants {
 	
 	//Players' Agents
@@ -17,4 +20,15 @@ public class Constants {
 	
 	static public String SOLUTION_ONTOLOGY = "solution";
 	static public String WISE_CONVERSATION_ONTOLOGY = "wise-conversation-ontology";
+
+
+	//Roles
+	static public HashMap<String, FIRERule> roleValues = new HashMap<String, FIRERule>();
+	static public ArrayList<FIRERelation> relations = new ArrayList<FIRERelation>();
+
+	//Component Weights
+	public static final int Component1Weight = 1;
+	public static final int Component2Weight = 1;
+	public static final int Component3Weight = 1;
+
 }

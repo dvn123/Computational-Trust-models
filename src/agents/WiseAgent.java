@@ -50,6 +50,8 @@ public class WiseAgent extends Agent {
 
     float[] knowledge;
 
+	String role;
+
     float[] tiredness;
     int[] question_latest;
 

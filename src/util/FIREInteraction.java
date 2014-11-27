@@ -1,7 +1,6 @@
 package util;
 
 import agents.FIREAgent;
-import agents.ReplyAgent;
 import jade.core.AID;
 
 import java.io.Serializable;
@@ -15,7 +14,7 @@ public class FIREInteraction implements Serializable {
     public float rating;
     public Date date;
 
-    FIREInteraction(FIREAgent fireAgent, AID replyAgent, int id, String topic, float rating) {
+    public FIREInteraction(FIREAgent fireAgent, AID replyAgent, int id, String topic, float rating) {
         this.fireAgent = fireAgent;
         this.replyAgent = replyAgent;
         this.id = id;
