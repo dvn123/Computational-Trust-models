@@ -2,11 +2,11 @@ package agents;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import util.Question;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 @SuppressWarnings("serial")
 public class SinalphaAgent extends BaseAnswerAgent {
@@ -133,49 +133,78 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private AID chooseBestAgent(int type) {
 		
-		//TODO: escolher o melhor agente e retornar
-		
 		switch (type)
 		{
 			case Question.OPERATOR_PLUS:
-				
-				break;
+				return compareAndReturnBestAgent(addition);
 			case Question.OPERATOR_MINUS:
-				
-				break;
+				return compareAndReturnBestAgent(subtraction);
 			case Question.OPERATOR_MUL:
-				
-				break;
+				return compareAndReturnBestAgent(multiplication);
 			case Question.OPERATOR_DIV:
-				
-				
-				break;
+				return compareAndReturnBestAgent(division);
 			default:
 				System.out.println("Invalid type!");
 				break;
 		}
-		
-		return wiseAgents.get(0);
+		return null;
 	}
 	
-	protected void handleSolution(ACLMessage ok) {
-		if (ok.getPerformative() == ACLMessage.CONFIRM)
-			writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
-		else if (ok.getPerformative() == ACLMessage.DISCONFIRM)
-			writeMsg(ok.getSender().getLocalName() + " - Answer is incorrect");
-		else 
-			writeMsg(ok.getSender().getLocalName() + " - est√°s tolo");
+	private AID compareAndReturnBestAgent(Map<AID, float[]> agents) {
 		
-		//TODO: atualizar agente
+		//TODO: caso em que s„o os valores todos iguais? que fazer?
+		
+		AID best=null;
+		float bestValue = 0, currentValue;
+		boolean firstValue=true;
+		
+		for (AID key : agents.keySet()) {
+			
+			if(firstValue) {
+				best=key;
+				bestValue=agents.get(key)[SINALPHA_POS];
+			} else {
+				
+				currentValue=agents.get(key)[SINALPHA_POS];
+				
+				if(currentValue>bestValue) {
+					bestValue=agents.get(key)[SINALPHA_POS];
+					best=key;
+				}
+			}
+		}
+		return best;
+	}
+
+	protected void handleSolution(ACLMessage message) {
+		
+		if (message.getPerformative() == ACLMessage.CONFIRM)
+			writeMsg(message.getSender().getLocalName() + " - Answer is correct");
+		else if (message.getPerformative() == ACLMessage.DISCONFIRM)
+			writeMsg(message.getSender().getLocalName() + " - Answer is incorrect");
+		else 
+			writeMsg(message.getSender().getLocalName() + " - estas tolo");
+		
+		AID agentResponsable;
+		try {
+			agentResponsable = questions.get(((Question) message.getContentObject()).getId());
+			
+			calculateAlgorithmSteps(agentResponsable, 
+					((Question) message.getContentObject()).getOperator(), message);
+			
+			questions.remove(((Question) message.getContentObject()).getId());
+					
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	protected AID getBestWiseAgent(Question question) {
 		
-		AID result = chooseBestAgent(question.getOperator());
-		
-		//TODO: adicionar result e idQuestion ao map
-		
-		return result;
+		AID bestAgent = chooseBestAgent(question.getOperator());
+		questions.put(question.getId(), bestAgent);
+			
+		return bestAgent;
 	}
 	
 }
