@@ -176,6 +176,7 @@ public class BaseAnswerAgent extends Agent {
 
 				//Algorithm to 
 				msg.addReceiver(getBestWiseAgent(x));
+				writeMsg("Received best agent FIRE");
 
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				// We want to receive a reply in 10 secs
@@ -221,7 +222,7 @@ public class BaseAnswerAgent extends Agent {
 		
 	}
 	
-	private void handleSolution(ACLMessage ok) {
+	protected void handleSolution(ACLMessage ok) {
 		if (ok.getPerformative() == ACLMessage.CONFIRM)
 			writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
 		else if (ok.getPerformative() == ACLMessage.DISCONFIRM)

@@ -27,9 +27,16 @@ public class FIREAgent extends BaseAnswerAgent {
             MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
     public static final int RATING_NUMBER_THRESHOLD = 10;
 
-    protected void setup() {
-        super.setup();
-        System.out.println("Agent "+getLocalName()+" waiting for requests...");
+    private float getDateWeight(Date t1) {
+        Date now = new Date();
+        int diff = Days.daysBetween(new org.joda.time.DateTime(t1), new org.joda.time.DateTime(now)).getDays(); // => 34
+        if(diff < 30) {
+            return 1;
+        } else if(diff < 365) {
+            return 1/(-30 + diff);
+        } else {
+            return 1/(diff*diff);
+        }
     }
 
     private ArrayList<Float> getAllDateWeights(ArrayList<FIREInteraction> db) {
@@ -44,33 +51,29 @@ public class FIREAgent extends BaseAnswerAgent {
         //normalize
         for(Float f: DateWeightsTemp) {
             f = f/sum;
+            writeMsg("DateWeights - " + f);
+
         }
 
         return DateWeightsTemp;
     }
 
     private float getRatingNumberReliability(int n, int m) {
-        return n > m ? 1 : n/m;
+        writeMsg("[RatingReliability] n - " + n + " m - " + m);
+        writeMsg("[RatingReliability] n/m = " +  ((float) n)/m);
+        return n > m ? 1 : ((float) n)/m;
     }
 
     private float getDeviationReliability(float ti, ArrayList<Float> DateWeights, ArrayList<FIREInteraction> db) {
+        writeMsg("[DeviationReliability] ti - " + ti);
         float res = 0;
         for(int i = 0; i < DateWeights.size(); i++) {
             res += (DateWeights.get(i)*Math.abs(db.get(i).rating - db.get(i).rating * DateWeights.get(i)))/2;
+            writeMsg("[DeviationReliability] resTEMP - " + res);
         }
-        return 1 - res;
-    }
+        writeMsg("[DeviationReliability] FINAL - " + (1-res));
 
-    private float getDateWeight(Date t1) {
-        Date now = new Date();
-        int diff = Days.daysBetween(new org.joda.time.DateTime(t1), new org.joda.time.DateTime(now)).getDays(); // => 34
-        if(diff < 30) {
-            return 1;
-        } else if(diff < 365) {
-            return 1/(-30 + diff);
-        } else {
-            return 1/(diff*diff);
-        }
+        return 1 - res;
     }
 
     private float getScorePastInteractions(ArrayList<FIREInteraction> db, ArrayList<Float> DateWeights) {
@@ -86,6 +89,7 @@ public class FIREAgent extends BaseAnswerAgent {
     }
 
     private float getPastInteractionsReliability(float ti, ArrayList<Float> DateWeights, ArrayList<FIREInteraction> db) {
+        writeMsg("[Reliability] 1 - " +  getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) + "\n 2 - " + getDeviationReliability(ti, DateWeights, db));
         return getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) * getDeviationReliability(ti, DateWeights, db);
     }
 
@@ -100,23 +104,62 @@ public class FIREAgent extends BaseAnswerAgent {
     }
 
     private float getScore(ArrayList<FIREInteraction> db) {
+        writeMsg("[FIREAgent] Calculating Score");
         ArrayList<Float> DateWeights = getAllDateWeights(db);
+        //writeMsg("[FIREAgent] Calculated DateWeights - " + String.valueOf(DateWeights.get(0)));
         float res1 = getScorePastInteractions(db, DateWeights);
+        writeMsg("[FIREAgent] Calculted PastScore - " + String.valueOf(res1));
         float rel1 = getPastInteractionsReliability(res1, DateWeights, db);
+        writeMsg("[FIREAgent] Calculated PastReliability - " + String.valueOf((rel1)));
 
         //float res2 = getScoreRole()
         //float component1 = getScore()
+        writeMsg("FINAL - " + String.valueOf((Constants.Component1Weight * rel1 * res1)/(Constants.Component1Weight * rel1)));
         return (Constants.Component1Weight * rel1 * res1)/(Constants.Component1Weight * rel1);
     }
 
     protected AID getBestWiseAgent(Question question) {
+        writeMsg("[FIREAgent] Received question");
         AID best = null;
-        float maxScore = 0;
+        float maxScore = -999;
+        float scoreTemp = -1;
         for (AID w: wiseAgents) {
-            best = getScore(FIREDb.find(w, String.valueOf(question.getOperator()), this)) > maxScore ? w : best;
+            if(FIREDb.find(w.getName(), String.valueOf(question.getOperator()), this.getName()).size() > 0) {
+                scoreTemp = getScore(FIREDb.find(w.getName(), String.valueOf(question.getOperator()), this.getName()));
+            } else {
+                scoreTemp = 0;
+            }
+            writeMsg("Length db - " + String.valueOf(FIREDb.find(w.getName(), String.valueOf(question.getOperator()), this.getName()).size()));
+            writeMsg("ScoreTemp - " + String.valueOf(scoreTemp));
+            writeMsg("MaxScore - " + String.valueOf(maxScore));
+            if (scoreTemp > maxScore) {
+                best =  w;
+                maxScore = scoreTemp;
+            }
         }
-        FIREDb.addInteraction(new FIREInteraction(this, best, question.getId(), String.valueOf(question.getOperator()), (float) -2));
-
+        if(best == null)
+            writeMsg("NULL");
+        //writeMsg("Returned best agent - ");
+        FIREDb.addInteraction(new FIREInteraction(this.getName(), best.getName(), question.getId(), String.valueOf(question.getOperator()), (float) 0));
         return best;
+    }
+
+    protected void handleSolution(ACLMessage ok) {
+        Question question = null;
+        try {
+            question = (Question) ok.getContentObject();
+        } catch (UnreadableException e) {
+            System.out.println("Error");
+        }
+        if (ok.getPerformative() == ACLMessage.CONFIRM) {
+            //FIREDb.addInteraction(new FIREInteraction(this, ok.getSender(), question.getId(), String.valueOf(question.getOperator()), (float) 1));
+            FIREDb.addRating(question.getId(), (float) 1);
+        } else if (ok.getPerformative() == ACLMessage.DISCONFIRM) {
+            //FIREDb.addInteraction(new FIREInteraction(this, ok.getSender(), question.getId(), String.valueOf(question.getOperator()), (float) -1));
+            FIREDb.addRating(question.getId(), (float) -1);
+        } else {
+            writeMsg(ok.getSender().getLocalName() + " - estás tolo");
+        }
+        super.handleSolution(ok);
     }
 }
