@@ -51,7 +51,7 @@ public class FIREAgent extends BaseAnswerAgent {
         //normalize
         for(Float f: DateWeightsTemp) {
             f = f/sum;
-            writeMsg("DateWeights - " + f);
+            System.out.println("DateWeights - " + f);
 
         }
 
@@ -59,19 +59,19 @@ public class FIREAgent extends BaseAnswerAgent {
     }
 
     private float getRatingNumberReliability(int n, int m) {
-        writeMsg("[RatingReliability] n - " + n + " m - " + m);
-        writeMsg("[RatingReliability] n/m = " +  ((float) n)/m);
+        System.out.println("[RatingReliability] n - " + n + " m - " + m);
+        System.out.println("[RatingReliability] n/m = " + ((float) n) / m);
         return n > m ? 1 : ((float) n)/m;
     }
 
     private float getDeviationReliability(float ti, ArrayList<Float> DateWeights, ArrayList<FIREInteraction> db) {
-        writeMsg("[DeviationReliability] ti - " + ti);
+        //System.out.println("[DeviationReliability] ti - " + ti);
         float res = 0;
         for(int i = 0; i < DateWeights.size(); i++) {
             res += (DateWeights.get(i)*Math.abs(db.get(i).rating - db.get(i).rating * DateWeights.get(i)))/2;
-            writeMsg("[DeviationReliability] resTEMP - " + res);
+            //System.out.println("[DeviationReliability] resTEMP - " + res);
         }
-        writeMsg("[DeviationReliability] FINAL - " + (1-res));
+        //System.out.println("[DeviationReliability] FINAL - " + (1-res));
 
         return 1 - res;
     }
@@ -89,58 +89,80 @@ public class FIREAgent extends BaseAnswerAgent {
     }
 
     private float getPastInteractionsReliability(float ti, ArrayList<Float> DateWeights, ArrayList<FIREInteraction> db) {
-        writeMsg("[Reliability] 1 - " +  getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) + "\n 2 - " + getDeviationReliability(ti, DateWeights, db));
+        System.out.println("[Reliability] 1 - " + getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) + "\n 2 - " + getDeviationReliability(ti, DateWeights, db));
         return getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) * getDeviationReliability(ti, DateWeights, db);
     }
 
-    private float getScoreRole(ArrayList<FIRERule> roles) {
+    private float getScoreRoles(ArrayList<FIRERule> roles) {
         float sum = 0;
         float res = 0;
         for(FIRERule fr: roles) {
             res += fr.rating*fr.reliability;
             sum += fr.reliability;
         }
-        return res/sum;
+        return sum == 0 ? res: res/sum;
     }
 
-    private float getScore(ArrayList<FIREInteraction> db) {
-        writeMsg("[FIREAgent] Calculating Score");
-        ArrayList<Float> DateWeights = getAllDateWeights(db);
-        //writeMsg("[FIREAgent] Calculated DateWeights - " + String.valueOf(DateWeights.get(0)));
-        float res1 = getScorePastInteractions(db, DateWeights);
-        writeMsg("[FIREAgent] Calculted PastScore - " + String.valueOf(res1));
-        float rel1 = getPastInteractionsReliability(res1, DateWeights, db);
-        writeMsg("[FIREAgent] Calculated PastReliability - " + String.valueOf((rel1)));
+    private ArrayList<FIRERule> getRoles(String name1, String name2) {
+        ArrayList<FIRERule> rules = new ArrayList<FIRERule>();
+        for(FIRERelation fr: Constants.relations) {
+            //System.out.println("[Roles] Testing 1 - " + fr.name1 + " == " + );
+            if(fr.name1.equals(name1) && (fr.name2.equals(name2) || fr.name2.equals(""))) {
+                rules.add(fr.fireRule);
+                System.out.println("[Roles] Found role " + fr.fireRule.role + " on agent " + fr.name1);
+            }
+        }
+        return rules;
+    }
 
-        //float res2 = getScoreRole()
+    private float getScore(ArrayList<FIREInteraction> db, AID w) {
+        ArrayList<Float> DateWeights = getAllDateWeights(db);
+        //System.out.println("[FIREAgent] Calculated DateWeights - " + String.valueOf(DateWeights.get(0)));
+        float res1 = 0;
+        float rel1 = 0;
+        if(db.size() > 0) {
+            res1 = getScorePastInteractions(db, DateWeights);
+            System.out.println("[FIREAgent] Calculted PastScore - " + String.valueOf(res1));
+            rel1 = getPastInteractionsReliability(res1, DateWeights, db);
+            System.out.println("[FIREAgent] Calculated PastReliability - " + String.valueOf((rel1)));
+        }
+
+        float res2 = getScoreRoles(getRoles(w.getLocalName(), this.getLocalName()));
+        System.out.println("[FIREAgent] Calculted RoleScore - " + String.valueOf(res2));
+        float rel2 = getReliabilityRoles(getRoles(w.getLocalName(), this.getLocalName()));
+        System.out.println("[FIREAgent] Calculated RoleReliability - " + String.valueOf((rel2)));
         //float component1 = getScore()
-        writeMsg("FINAL - " + String.valueOf((Constants.Component1Weight * rel1 * res1)/(Constants.Component1Weight * rel1)));
-        return (Constants.Component1Weight * rel1 * res1)/(Constants.Component1Weight * rel1);
+        System.out.println("FINAL - " + (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2));
+        return (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2);
+    }
+
+    private float getReliabilityRoles(ArrayList<FIRERule> roles) {
+        float res = 1;
+        for(FIRERule fr: roles ) {
+            res = res*fr.reliability;
+        }
+        return res;
     }
 
     protected AID getBestWiseAgent(Question question) {
-        writeMsg("[FIREAgent] Received question");
+        System.out.println("[FIREAgent] Received question");
         AID best = null;
         float maxScore = -999;
         float scoreTemp = -1;
         for (AID w: wiseAgents) {
-            if(FIREDb.find(w.getName(), String.valueOf(question.getOperator()), this.getName()).size() > 0) {
-                scoreTemp = getScore(FIREDb.find(w.getName(), String.valueOf(question.getOperator()), this.getName()));
-            } else {
-                scoreTemp = 0;
-            }
-            writeMsg("Length db - " + String.valueOf(FIREDb.find(w.getName(), String.valueOf(question.getOperator()), this.getName()).size()));
-            writeMsg("ScoreTemp - " + String.valueOf(scoreTemp));
-            writeMsg("MaxScore - " + String.valueOf(maxScore));
+            scoreTemp = getScore(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()), w);
+            System.out.println("Length db - " + String.valueOf(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()).size()));
+            System.out.println("ScoreTemp - " + String.valueOf(scoreTemp));
+            System.out.println("MaxScore - " + String.valueOf(maxScore));
             if (scoreTemp > maxScore) {
                 best =  w;
                 maxScore = scoreTemp;
             }
         }
         if(best == null)
-            writeMsg("NULL");
-        //writeMsg("Returned best agent - ");
-        FIREDb.addInteraction(new FIREInteraction(this.getName(), best.getName(), question.getId(), String.valueOf(question.getOperator()), (float) 0));
+            System.out.println("NULL");
+        //System.out.println("Returned best agent - ");
+        FIREDb.addInteraction(new FIREInteraction(this.getLocalName(), best.getLocalName(), question.getId(), String.valueOf(question.getOperator()), (float) 0));
         return best;
     }
 
@@ -158,7 +180,7 @@ public class FIREAgent extends BaseAnswerAgent {
             //FIREDb.addInteraction(new FIREInteraction(this, ok.getSender(), question.getId(), String.valueOf(question.getOperator()), (float) -1));
             FIREDb.addRating(question.getId(), (float) -1);
         } else {
-            writeMsg(ok.getSender().getLocalName() + " - estás tolo");
+            System.out.println(ok.getSender().getLocalName() + " - estás tolo");
         }
         super.handleSolution(ok);
     }

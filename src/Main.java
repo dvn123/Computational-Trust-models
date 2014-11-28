@@ -3,6 +3,7 @@ import jade.core.Profile;
 import jade.core.ProfileImpl; 
 import jade.wrapper.*;
 import util.Constants;
+import util.FIRERelation;
 import util.FIRERule;
 
 import java.sql.*;
@@ -14,8 +15,15 @@ public class Main {
 		Constants.roleValues.put("high_school_dropout", new FIRERule("cs_student", (float) -0.5, (float) 0.2));
 		Constants.roleValues.put("neanderthal", new FIRERule("cs_student", (float) -1, (float) 1));
 		Constants.roleValues.put("cs_student", new FIRERule("cs_student", (float) 0.8, (float) 0.7));
-		Constants.roleValues.put("kind", new FIRERule("family_member", (float) 0.2, (float) 0.4));
-		Constants.roleValues.put("evil", new FIRERule("enemy", (float) -0.6, (float) 0.4));
+		Constants.roleValues.put("kind", new FIRERule("kind", (float) 0.2, (float) 0.4));
+		Constants.roleValues.put("evil", new FIRERule("evil", (float) -0.6, (float) 0.4));
+
+		Constants.relations.add(new FIRERelation("socrates", "", Constants.roleValues.get("evil")));
+		Constants.relations.add(new FIRERelation("diogo", "", Constants.roleValues.get("cs_student")));
+		Constants.relations.add(new FIRERelation("diogo", "", Constants.roleValues.get("kind")));
+		Constants.relations.add(new FIRERelation("villate", "", Constants.roleValues.get("mathematician")));
+
+
 
 
 
