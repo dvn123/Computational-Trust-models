@@ -52,15 +52,14 @@ public class FIREAgent extends BaseAnswerAgent {
         for(Float f: DateWeightsTemp) {
             f = f/sum;
             System.out.println("DateWeights - " + f);
-
         }
 
         return DateWeightsTemp;
     }
 
     private float getRatingNumberReliability(int n, int m) {
-        System.out.println("[RatingReliability] n - " + n + " m - " + m);
-        System.out.println("[RatingReliability] n/m = " + ((float) n) / m);
+        //System.out.println("[RatingReliability] n - " + n + " m - " + m);
+        //System.out.println("[RatingReliability] n/m = " + ((float) n) / m);
         return n > m ? 1 : ((float) n)/m;
     }
 
@@ -89,7 +88,7 @@ public class FIREAgent extends BaseAnswerAgent {
     }
 
     private float getPastInteractionsReliability(float ti, ArrayList<Float> DateWeights, ArrayList<FIREInteraction> db) {
-        System.out.println("[Reliability] 1 - " + getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) + "\n 2 - " + getDeviationReliability(ti, DateWeights, db));
+        //System.out.println("[Reliability] 1 - " + getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) + "\n 2 - " + getDeviationReliability(ti, DateWeights, db));
         return getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) * getDeviationReliability(ti, DateWeights, db);
     }
 
@@ -109,7 +108,7 @@ public class FIREAgent extends BaseAnswerAgent {
             //System.out.println("[Roles] Testing 1 - " + fr.name1 + " == " + );
             if(fr.name1.equals(name1) && (fr.name2.equals(name2) || fr.name2.equals(""))) {
                 rules.add(fr.fireRule);
-                System.out.println("[Roles] Found role " + fr.fireRule.role + " on agent " + fr.name1);
+                //System.out.println("[Roles] Found role " + fr.fireRule.role + " on agent " + fr.name1);
             }
         }
         return rules;
@@ -132,7 +131,7 @@ public class FIREAgent extends BaseAnswerAgent {
         float rel2 = getReliabilityRoles(getRoles(w.getLocalName(), this.getLocalName()));
         System.out.println("[FIREAgent] Calculated RoleReliability - " + String.valueOf((rel2)));
         //float component1 = getScore()
-        System.out.println("FINAL - " + (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2));
+        //System.out.println("FINAL - " + (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2));
         return (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2);
     }
 
@@ -145,13 +144,12 @@ public class FIREAgent extends BaseAnswerAgent {
     }
 
     protected AID getBestWiseAgent(Question question) {
-        System.out.println("[FIREAgent] Received question");
         AID best = null;
         float maxScore = -999;
         float scoreTemp = -1;
         for (AID w: wiseAgents) {
             scoreTemp = getScore(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()), w);
-            System.out.println("Length db - " + String.valueOf(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()).size()));
+            //System.out.println("Length db - " + String.valueOf(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()).size()));
             System.out.println("ScoreTemp - " + String.valueOf(scoreTemp));
             System.out.println("MaxScore - " + String.valueOf(maxScore));
             if (scoreTemp > maxScore) {
