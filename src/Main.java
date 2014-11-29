@@ -44,8 +44,11 @@ public class Main {
 		try {
 			dummy = cc.createNewAgent("inProcess", 
 			 "jade.tools.rma.rma", null);
+			
+			
 			//acceptnewagent alternativa
 			dummy.start(); 
+			//cc.createNewAgent("nabo","agents.WiseAgent" ,null).start();
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

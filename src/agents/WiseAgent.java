@@ -90,10 +90,18 @@ public class WiseAgent extends Agent {
 
         Object[] args = getArguments();
         if (args != null && args.length > 0) {
-            knowledge = new float[] {Float.valueOf((String) args[0]), Float.valueOf((String) args[1]), Float.valueOf((String) args[2]), Float.valueOf((String) args[3])};
-            tiredness_restored_per_rest = Float.valueOf((String) args[4]);
-            tiredness_factor = Float.valueOf((String) args[5]);
-            tiredness_rest_limit = Integer.valueOf((String) args[6]);
+        	if (args[0].getClass() == Float.class) {
+        		knowledge = new float[] {(float) args[0], (float) args[1], (float) args[2], (float) args[3]};
+                tiredness_restored_per_rest = (float) args[4];
+                tiredness_factor = (float) args[5];
+                tiredness_rest_limit = (int) Math.floor((float) args[6]);
+        	}
+        	else {
+        		knowledge = new float[] {Float.parseFloat((String)args[0]), Float.parseFloat((String) args[1]), Float.parseFloat((String) args[2]), Float.parseFloat((String) args[3])};
+                tiredness_restored_per_rest = Float.parseFloat((String) args[4]);
+                tiredness_factor = Float.parseFloat((String) args[5]);
+                tiredness_rest_limit = Integer.parseInt((String) args[6]);
+        	}  
         } else {
             knowledge = new float[] {rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), rand.nextFloat()};
             tiredness_restored_per_rest = (float) 0.02;
