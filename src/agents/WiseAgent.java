@@ -138,8 +138,9 @@ public class WiseAgent extends Agent {
 					writeMsg("Agree");
 					ACLMessage agree = request.createReply();
 					if(x != null) {
-						writeMsg("result: " + Float.toString(reply(x)));
-						agree.setContent(Float.toString(reply(x)));
+						String value = Float.toString(reply(x));
+						writeMsg("result: " + value);
+						agree.setContent(value);
 					}
 					agree.setPerformative(ACLMessage.INFORM);
 

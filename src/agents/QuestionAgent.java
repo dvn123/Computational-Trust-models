@@ -161,6 +161,7 @@ public class QuestionAgent extends Agent {
 						e.printStackTrace();
 					}
 					
+					writeMsg("Operation result: " + question.getResult());
 					writeMsg("Sending solution to " + answer.getSender().getLocalName());
 					send(reply);
 				}
