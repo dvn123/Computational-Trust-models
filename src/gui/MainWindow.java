@@ -68,9 +68,9 @@ public class MainWindow {
 		frame.getContentPane().setLayout(null);
 
 		wiseAgentsList = new DefaultListModel();
-		wiseAgentsList.addElement("Jane Doe");
+		/*wiseAgentsList.addElement("Jane Doe");
 		wiseAgentsList.addElement("John Smith");
-		wiseAgentsList.addElement("Kathy Green");
+		wiseAgentsList.addElement("Kathy Green");*/
 
 		list = new JList(wiseAgentsList);
 		list.addMouseListener(new MouseAdapter() {
@@ -124,6 +124,12 @@ public class MainWindow {
 		JButton btnStartSimulation = new JButton("Start simulation");
 		btnStartSimulation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
+				if (wiseAgents.size() < 1) {
+					JOptionPane.showMessageDialog(new JFrame(), "You must add at least one agent!", "ERROR",
+					        JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 
 
 
@@ -160,7 +166,8 @@ public class MainWindow {
 						it.remove(); // avoids a ConcurrentModificationException
 					}
 					
-					cc.createNewAgent("fire","agents.BaseAnswerAgent" ,null).start();
+					cc.createNewAgent("fire","agents.FIREAgent" ,null).start();
+					cc.createNewAgent("sinalpha","agents.BaseAnswerAgent" ,null).start();
 					Thread.sleep(100);
 					cc.createNewAgent("manela","agents.QuestionAgent" ,null).start();
 
@@ -176,7 +183,7 @@ public class MainWindow {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						javafx.application.Application.launch(AdvancedStockLineChartSample.class);
+						javafx.application.Application.launch(AccuracyLineChart.class);
 					}
 				}).start();
 			}

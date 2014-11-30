@@ -10,6 +10,7 @@ package gui;
 
 import java.util.Random;
 
+import agents.QuestionAgent;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -42,13 +43,13 @@ import javafx.util.Duration;
 
  */
 
-public class AdvancedStockLineChartSample extends Application {
+public class AccuracyLineChart extends Application {
 
 
 
-	private XYChart.Series<Number,Number> hourDataSeries;
+	private XYChart.Series<Number,Number> sinalphaDataSeries;
 
-	private XYChart.Series<Number,Number> minuteDataSeries;
+	private XYChart.Series<Number,Number> fireDataSeries;
 
 	private NumberAxis xAxis;
 
@@ -98,6 +99,7 @@ public class AdvancedStockLineChartSample extends Application {
 			}
 
 		}));
+		
 
 		animation.setCycleCount(Animation.INDEFINITE);
 
@@ -123,7 +125,11 @@ public class AdvancedStockLineChartSample extends Application {
 
 		lc.setLegendVisible(false);
 
-		lc.setTitle("ACME Company Stock");
+		lc.setTitle("Agents accuracy over time");
+		
+		//my properties
+		
+		
 
 		xAxis.setLabel("Time");
 
@@ -135,19 +141,19 @@ public class AdvancedStockLineChartSample extends Application {
 
 		// add starting data
 
-		hourDataSeries = new XYChart.Series<Number,Number>();
+		sinalphaDataSeries = new XYChart.Series<Number,Number>();
 
-		hourDataSeries.setName("Hourly Data");
+		sinalphaDataSeries.setName("Sinalpha");
 
-		minuteDataSeries = new XYChart.Series<Number,Number>();
+		fireDataSeries = new XYChart.Series<Number,Number>();
 
-		minuteDataSeries.setName("Minute Data");
+		fireDataSeries.setName("Fire");
 
 		// create some starting data
 
-		hourDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,prevY));
+		sinalphaDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,0));
 
-		minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,prevY));
+		fireDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,0));
 
 		// for (double m=0; m<(60); m++) {
 
@@ -157,9 +163,13 @@ public class AdvancedStockLineChartSample extends Application {
 
 		// }
 
-		lc.getData().add(minuteDataSeries);
+		lc.getData().add(fireDataSeries);
 
-		lc.getData().add(hourDataSeries);
+		lc.getData().add(sinalphaDataSeries);
+		lc.setLegendVisible(true);
+		
+		System.err.println(lc.getPrefHeight());
+		System.err.println(lc.getPrefWidth());
 
 		return lc;
 
@@ -206,7 +216,7 @@ public class AdvancedStockLineChartSample extends Application {
 
 			// after 25hours delete old data
 
-			if (timeInHours > 25) hourDataSeries.getData().remove(0);
+			if (timeInHours > 25) sinalphaDataSeries.getData().remove(0);
 
 			// every hour after 24 move range 1 hour
 
@@ -252,16 +262,13 @@ public class AdvancedStockLineChartSample extends Application {
 
 		// after 25hours delete old data
 
-		Random randomPickVariance = new Random();
-
-
-
+		double x =  QuestionAgent.getAgentRatio("fire");
+		double y =  QuestionAgent.getAgentRatio("sinalpha");
 		
+		fireDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,x));
+		sinalphaDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,y));
 
-		minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,randomPickVariance.nextInt(101)));
-		hourDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,randomPickVariance.nextInt(101)));
-
-		if (timeInHours > 25) minuteDataSeries.getData().remove(0);
+		if (timeInHours > 25) fireDataSeries.getData().remove(0);
 
 	}
 
@@ -288,11 +295,16 @@ public class AdvancedStockLineChartSample extends Application {
 		init(primaryStage);
 
 		primaryStage.show();
+		try {
+			Thread.sleep(800);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		play();
 
 	}
 
-	public static void main(String[] args) { launch(args); }
+	/*public static void main(String[] args) { launch(args); }*/
 
 }

@@ -26,11 +26,17 @@ import util.Question;
 
 public class QuestionAgent extends Agent {
 
-	private static Map<String, Integer> agentsResults = new HashMap<String, Integer>();
+	private static int[] agentsResults;
 	private static Stack<Question> questions = new Stack<Question>();
+	private static ArrayList<AID> players;
 
 	protected void setup() {
-		ArrayList<AID> players = getPlayers(); //Search for players
+		players = getPlayers();
+		agentsResults = new int[players.size()];
+		
+		for(int index = 0; index < agentsResults.length; index++) {
+			agentsResults[index] = 0;
+		}
 
 		try {
 			Thread.sleep(1000);
@@ -76,7 +82,7 @@ public class QuestionAgent extends Agent {
 						if (sd.getType().equals(Constants.SERVICE_DESCRIPTION_TYPE_PLAYER)) {
 							writeMsg("- Service \""+sd.getName()+"\" provided by player "+provider.getName());
 							agentsFound.add(provider);
-							agentsResults.put(provider.getLocalName(), 0);
+							
 						}
 					}
 				}
@@ -152,7 +158,14 @@ public class QuestionAgent extends Agent {
 					ACLMessage reply = answer.createReply();
 					reply.setOntology(Constants.SOLUTION_ONTOLOGY);
 
-					reply.setPerformative(result == question.getResult() ? ACLMessage.CONFIRM : ACLMessage.DISCONFIRM);
+					if(result == question.getResult()) {
+						reply.setPerformative(ACLMessage.CONFIRM);
+						agentsResults[i] += 1;
+					}
+					else 
+						reply.setPerformative(ACLMessage.DISCONFIRM);
+					
+					
 					reply.setContent(Integer.toString(question.getId()));
 					
 					try {
@@ -168,7 +181,7 @@ public class QuestionAgent extends Agent {
 			}
 			System.out.println("***********************************************************");
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(900);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -177,8 +190,20 @@ public class QuestionAgent extends Agent {
 		
 	}
 
-	public static Map<String, Integer> getAgentsResults() {
-		return agentsResults;
+	public static double getAgentRatio(String agent) {
+		int i;
+		for (i = 0; i < players.size(); i++) {
+			
+			if(players.get(i).getLocalName().equals(agent))
+				break;
+		}
+		
+		
+		if (i == players.size())
+			return 0;
+
+		
+		return (double) agentsResults[i] / (questions.size() == 0 ? 1 : questions.size()) * 100;
 	}
 	
 	public static int getNumberQuestions() {
