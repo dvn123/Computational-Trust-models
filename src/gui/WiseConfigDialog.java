@@ -55,7 +55,7 @@ public class WiseConfigDialog extends JDialog {
 
 		this.wiseAgents = wiseAgents;
 		setTitle("New Wise Agent");
-		setBounds(100, 100, 487, 324);
+		setBounds(100, 100, 487, 340);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -182,10 +182,10 @@ public class WiseConfigDialog extends JDialog {
 		btnRandom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Random r = new Random();
-				textAddition.setText(Integer.toString(r.nextInt(101)));
-				textSubtractions.setText(Integer.toString(r.nextInt(101)));
-				textMultiplication.setText(Integer.toString(r.nextInt(101)));
-				textDivisions.setText(Integer.toString(r.nextInt(101)));
+				textAddition.setText(Integer.toString(r.nextInt(70)));
+				textSubtractions.setText(Integer.toString(r.nextInt(70)));
+				textMultiplication.setText(Integer.toString(r.nextInt(70)));
+				textDivisions.setText(Integer.toString(r.nextInt(70)));
 			}
 		});
 		btnRandom.setBounds(192, 229, 89, 23);

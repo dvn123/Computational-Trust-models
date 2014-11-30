@@ -63,7 +63,7 @@ public class WiseAgent extends Agent {
         Random rand = new Random();
         float knowledge_loc = knowledge[q.getOperator()] - tiredness[q.getOperator()];
         updateTiredness(q);
-        if(rand.nextFloat() < knowledge_loc) {
+        if(rand.nextInt(101) < knowledge_loc) {
             return q.getResult();
         } else {
             return q.getResult()*knowledge_loc + (1-knowledge_loc)*(rand.nextInt((MAX - MIN) + 1) + MIN);
@@ -112,6 +112,7 @@ public class WiseAgent extends Agent {
         tiredness = new float[] {0,0,0,0};
         question_latest = new int[] {999,999,999,999};
 		
+        writeMsg("knowledge: " + knowledge[0] + " " + knowledge[1] + " " + knowledge[2] + " " + knowledge[3] + " " ); 
 		registerWise();
 		
 		writeMsg("waiting for requests...");

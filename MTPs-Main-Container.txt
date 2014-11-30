@@ -1,1 +1,1 @@
-http://192.168.1.97:7778/acc
+http://Cavaleiro-PC.lan:7778/acc

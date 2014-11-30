@@ -11,23 +11,33 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import java.util.ArrayList;
 import jade.util.leap.Iterator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 import util.Constants;
 import util.Question;
 
 
 public class QuestionAgent extends Agent {
-	private Question question;
+
+	private static Map<String, Integer> agentsResults = new HashMap<String, Integer>();
+	private static Stack<Question> questions = new Stack<Question>();
 
 	protected void setup() {
 		ArrayList<AID> players = getPlayers(); //Search for players
 
-
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		if (players != null && players.size() > 0)
 			addBehaviour(new QuestioningBehaviour(this, players));
 		else
@@ -66,6 +76,7 @@ public class QuestionAgent extends Agent {
 						if (sd.getType().equals(Constants.SERVICE_DESCRIPTION_TYPE_PLAYER)) {
 							writeMsg("- Service \""+sd.getName()+"\" provided by player "+provider.getName());
 							agentsFound.add(provider);
+							agentsResults.put(provider.getLocalName(), 0);
 						}
 					}
 				}
@@ -116,7 +127,10 @@ public class QuestionAgent extends Agent {
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
 				//msg.setContent("dummy-action");
 
-				question = Question.generateQuestion();
+				questions.push(Question.generateQuestion());
+				
+				Question question = questions.peek();
+				
 
 				try {
 					msg.setContentObject(question);
@@ -160,6 +174,14 @@ public class QuestionAgent extends Agent {
 			
 		}
 		
+	}
+
+	public static Map<String, Integer> getAgentsResults() {
+		return agentsResults;
+	}
+	
+	public static int getNumberQuestions() {
+		return questions.size();
 	}
 }
 
