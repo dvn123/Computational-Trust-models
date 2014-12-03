@@ -53,15 +53,15 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	protected void init() {
 		
-		this.alpha0=(double)((3.0*Math.PI)/2.0);
+		this.alpha0=(double)((3.1*Math.PI)/2.0);
 		this.lambda_pos=(double)1.00;
 		this.lambda_neg=(double)-1.50;
 		this.omega=(double)(Math.PI/12.0);
 		this.ro=(double)0.50;
 		
 		double[] initial_values={this.alpha0, calculateSinalpha(this.alpha0)};
-		
-		System.out.println("---------> alpha0: " + this.alpha0 + " sinalpha0: " + initial_values[SINALPHA_POS]);
+
+		writeMsg("---------> alpha0: " + this.alpha0 + " sinalpha0: " + initial_values[SINALPHA_POS]);
 		
 		for(int i=0; i<wiseAgents.size(); i++) {
 			addition.put(wiseAgents.get(i), initial_values);
@@ -78,14 +78,14 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			return previous_alpha+this.lambda_pos*this.omega;
 		}
 		else {
-			writeMsg("---------> new alpha: " + (previous_alpha+this.lambda_neg*this.omega));
+			writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_neg * this.omega));
 			return previous_alpha+this.lambda_neg*this.omega;
 		}
 	}
 	
 	private double calculateSinalpha(double alpha) {
 		
-		writeMsg("---------> new sinalpha: " + (double)(this.ro*(Math.sin(alpha)+1)));
+		writeMsg("---------> new sinalpha: " + (double) (this.ro * (Math.sin(alpha) + 1)));
 		return (double)(this.ro*(Math.sin(alpha)+1));
 	}
 	
@@ -145,7 +145,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			return new_values;
 			
 		} else {
-			System.out.println("Invalid agent!");
+			writeMsg("Invalid agent!");
 			
 			return null;
 		}
@@ -164,7 +164,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			case Question.OPERATOR_DIV:
 				return compareAndReturnBestAgent(division);
 			default:
-				System.out.println("Invalid type!");
+				writeMsg("Invalid type!");
 				break;
 		}
 		return null;
@@ -192,8 +192,8 @@ public class SinalphaAgent extends BaseAnswerAgent {
 					best=key;
 				} 
 			}
-			
-			System.out.println("---------------->sinalpha: " + agents.get(key)[SINALPHA_POS]);
+
+			writeMsg("---------------->sinalpha: " + agents.get(key)[SINALPHA_POS]);
 		}
 		
 		for (AID key : agents.keySet()) {
@@ -207,7 +207,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			int agent = rand.nextInt(equalBests.size());
 			best = equalBests.get(agent);
 		}
-		System.out.println("-------------------> escolhido: " + bestValue);
+		writeMsg("-------------------> escolhido: " + bestValue);
 		return best;
 	}
 
