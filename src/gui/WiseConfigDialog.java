@@ -34,6 +34,8 @@ public class WiseConfigDialog extends JDialog {
 	private JTextField textFactor;
 
 	private Map wiseAgents;
+	private JTextField textRestore;
+	private JTextField textRounds;
 
 	/**
 	 * Launch the application.
@@ -154,15 +156,15 @@ public class WiseConfigDialog extends JDialog {
 
 		Box horizontalBox_1 = Box.createHorizontalBox();
 		horizontalBox_1.setBorder(new TitledBorder(null, "Tiredness", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		horizontalBox_1.setBounds(264, 80, 182, 138);
+		horizontalBox_1.setBounds(264, 80, 209, 138);
 		contentPanel.add(horizontalBox_1);
 
 		JPanel panel_1 = new JPanel();
 		horizontalBox_1.add(panel_1);
 		panel_1.setLayout(null);
 
-		JLabel lblFactor = new JLabel("Factor:");
-		lblFactor.setBounds(10, 11, 46, 14);
+		JLabel lblFactor = new JLabel("Tiredeness rate:");
+		lblFactor.setBounds(10, 11, 102, 14);
 		panel_1.add(lblFactor);
 
 		textFactor = new JTextField();
@@ -175,8 +177,30 @@ public class WiseConfigDialog extends JDialog {
 			}
 		});
 		textFactor.setColumns(10);
-		textFactor.setBounds(55, 8, 46, 20);
+		textFactor.setBounds(141, 9, 46, 20);
 		panel_1.add(textFactor);
+		
+		JLabel lblRestoreRate = new JLabel("Restore rate:");
+		lblRestoreRate.setBounds(10, 37, 102, 15);
+		panel_1.add(lblRestoreRate);
+		
+		JLabel lblRoundsToRestore = new JLabel("Rounds to restore:");
+		lblRoundsToRestore.setBounds(10, 64, 129, 15);
+		panel_1.add(lblRoundsToRestore);
+		
+		textRestore = new JTextField();
+		textRestore.setText("0");
+		textRestore.setHorizontalAlignment(SwingConstants.CENTER);
+		textRestore.setColumns(10);
+		textRestore.setBounds(141, 35, 46, 20);
+		panel_1.add(textRestore);
+		
+		textRounds = new JTextField();
+		textRounds.setText("0");
+		textRounds.setHorizontalAlignment(SwingConstants.CENTER);
+		textRounds.setColumns(10);
+		textRounds.setBounds(141, 62, 46, 20);
+		panel_1.add(textRounds);
 
 		JButton btnRandom = new JButton("Random");
 		btnRandom.addActionListener(new ActionListener() {
@@ -203,7 +227,9 @@ public class WiseConfigDialog extends JDialog {
 						float subtraction = Float.parseFloat(textSubtractions.getText()); 
 						float divisions = Float.parseFloat(textDivisions.getText()); 
 						float multiplications = Float.parseFloat(textMultiplication.getText());
-						float factor = Float.parseFloat(textFactor.getText());
+						float tiredenessRate = Float.parseFloat(textFactor.getText());
+						float restoreRate = Float.parseFloat(textRestore.getText());
+						float rounds = Float.parseFloat(textRounds.getText());
 						
 						if(!(isPercentage(addition) && isPercentage(subtraction) && isPercentage(multiplications) 
 								&& isPercentage(divisions))) {
@@ -212,7 +238,7 @@ public class WiseConfigDialog extends JDialog {
 							return;
 						}
 						
-						wiseAgents.put(name, new WiseData(name, addition, subtraction, multiplications, divisions,factor));
+						wiseAgents.put(name, new WiseData(name, addition, subtraction, multiplications, divisions,restoreRate,tiredenessRate,rounds));
 						agentName.setName(name);
 						dispose();
 					}

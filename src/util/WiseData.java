@@ -8,7 +8,7 @@ public class WiseData {
 	float knowledge[];
 	float tiredness[];
 	
-	public WiseData(String name, float additions, float subtractions, float multiplications, float divisions, float tiredness) {
+	public WiseData(String name, float additions, float subtractions, float multiplications, float divisions, float restore, float factor, float round) {
 		this.name = name;
 		knowledge = new float[4];
 		this.tiredness = new float[3];
@@ -18,9 +18,9 @@ public class WiseData {
 		knowledge[Question.OPERATOR_MUL] = multiplications;
 		knowledge[Question.OPERATOR_DIV] = divisions;
 		
-		this.tiredness[0] = tiredness;
-		this.tiredness[1] = 0;
-		this.tiredness[2] = 0;
+		this.tiredness[0] = restore;
+		this.tiredness[1] = factor;
+		this.tiredness[2] = round;
 		
 	}
 	
@@ -33,18 +33,6 @@ public class WiseData {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public <T> T[] concatenate (T[] a, T[] b) {
-	    int aLen = a.length;
-	    int bLen = b.length;
-
-	    @SuppressWarnings("unchecked")
-	    T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen+bLen);
-	    System.arraycopy(a, 0, b, 0, aLen);
-	    System.arraycopy(b, 0, b, aLen, bLen);
-
-	    return c;
 	}
 	
 	public Object[] getData() {

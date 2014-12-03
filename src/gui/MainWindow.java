@@ -204,7 +204,7 @@ public class MainWindow {
 				}).start();
 			}
 		});
-		btnStartSimulation.setBounds(282, 227, 142, 23);
+		btnStartSimulation.setBounds(266, 226, 158, 23);
 		frame.getContentPane().add(btnStartSimulation);
 
 		JLabel lblWiseData = new JLabel("Wise Agent Data:");
