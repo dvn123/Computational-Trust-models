@@ -2,6 +2,8 @@ package agents;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.Vector;
 
 import util.Question;
 import jade.core.AID;
@@ -123,12 +125,14 @@ public class SinalphaAgent extends BaseAnswerAgent {
 
 	private float[] calculateAgentValues(float[] values, ACLMessage message) {
 		
+		float[] new_values = new float[2];
+		
 		if(values!=null) {
 			
-			values[ALPHA_POS]=calculateAlpha(values[ALPHA_POS], message);
-			values[SINALPHA_POS]=calculateSinalpha(values[ALPHA_POS]);
+			new_values[ALPHA_POS]=calculateAlpha(values[ALPHA_POS], message);
+			new_values[SINALPHA_POS]=calculateSinalpha(values[ALPHA_POS]);
 			
-			return values;
+			return new_values;
 			
 		} else {
 			System.out.println("Invalid agent!");
@@ -158,11 +162,10 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private AID compareAndReturnBestAgent(Map<AID, float[]> agents) {
 		
-		//TODO: caso em que s�o os valores todos iguais? que fazer?
-		
 		AID best=null;
 		float bestValue = 0, currentValue;
 		boolean firstValue=true;
+		Vector<AID> equalBests = new Vector<AID>();
 		
 		for (AID key : agents.keySet()) {
 			
@@ -176,9 +179,22 @@ public class SinalphaAgent extends BaseAnswerAgent {
 				if(currentValue>bestValue) {
 					bestValue=agents.get(key)[SINALPHA_POS];
 					best=key;
-				}
+				} 
 			}
 		}
+		
+		for (AID key : agents.keySet()) {
+			if(agents.get(key)[SINALPHA_POS]==bestValue)
+				equalBests.addElement(key);
+		}
+		
+		if(equalBests.size()>1) {
+			
+			Random rand = new Random();
+			int agent = rand.nextInt(equalBests.size());
+			best = equalBests.get(agent);
+		}
+		
 		return best;
 	}
 
