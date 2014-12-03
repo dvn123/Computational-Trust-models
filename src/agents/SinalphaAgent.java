@@ -137,7 +137,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		if(values!=null) {
 			
 			new_values[ALPHA_POS]=calculateAlpha(values[ALPHA_POS], message);
-			new_values[SINALPHA_POS]=calculateSinalpha(values[ALPHA_POS]);
+			new_values[SINALPHA_POS]=calculateSinalpha(values[ALPHA_POS]); //TODO: aqui não é o novo alfa?
 			
 			return new_values;
 			
@@ -176,7 +176,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		
 		for (AID key : agents.keySet()) {
 			
-			if(firstValue) {
+			if(firstValue) { //TODO: firstValue não está sempre a true? chega a entrar no else?
 				best=key;
 				bestValue=agents.get(key)[SINALPHA_POS];
 			} else {

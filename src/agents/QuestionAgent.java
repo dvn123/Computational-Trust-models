@@ -179,11 +179,11 @@ public class QuestionAgent extends Agent {
 				}
 			}
 			System.out.println("***********************************************************");
-			/*try {
-				Thread.sleep(5);
+			try {
+				Thread.sleep(900);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}*/
+			}
 
 		}
 
