@@ -52,7 +52,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		this.alpha0=(double)((3.0*Math.PI)/2.0);
 		this.lambda_pos=(double)1.00;
 		this.lambda_neg=(double)-1.50;
-		this.omega=(double)(Math.PI/5.0);
+		this.omega=(double)(Math.PI/4.0);
 		this.ro=(double)0.50;
 		
 		double[] initial_values={this.alpha0, calculateSinalpha(this.alpha0)};
@@ -171,7 +171,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		AID best=null;
 		double bestValue = 0, currentValue;
 		boolean firstValue=true;
-		//Vector<AID> equalBests = new Vector<AID>();
+		Vector<AID> equalBests = new Vector<AID>();
 		
 		for (AID key : agents.keySet()) {
 			
@@ -184,13 +184,13 @@ public class SinalphaAgent extends BaseAnswerAgent {
 				currentValue=agents.get(key)[SINALPHA_POS];
 				
 				if(currentValue>bestValue) {
-					bestValue=agents.get(key)[SINALPHA_POS];
+					bestValue=currentValue;
 					best=key;
 				} 
 			}
 		}
 		
-		/*for (AID key : agents.keySet()) {
+		for (AID key : agents.keySet()) {
 			if(agents.get(key)[SINALPHA_POS]==bestValue)
 				equalBests.addElement(key);
 		}
@@ -201,7 +201,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			int agent = rand.nextInt(equalBests.size());
 			best = equalBests.get(agent);
 		}
-		*/
+	
 		return best;
 	}
 
