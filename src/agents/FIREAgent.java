@@ -10,6 +10,7 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import org.joda.time.Seconds;
 import util.*;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -31,48 +32,59 @@ public class FIREAgent extends BaseAnswerAgent {
 
     private float getDateWeight(Date t1) {
         Date now = new Date();
-        int diff = Days.daysBetween(new org.joda.time.DateTime(t1), new org.joda.time.DateTime(now)).getDays(); // => 34
-        if(diff < 30) {
+        int diff = Seconds.secondsBetween(new org.joda.time.DateTime(t1), new org.joda.time.DateTime(now)).getSeconds();
+        if(diff <= 30) {
             return 1;
-        } else if(diff < 365) {
-            return 1/(-30 + diff);
         } else {
-            return 1/(diff*diff);
+            float n = (float) (130*0.01 - 0.01*diff);
+            return n < (float) (0.01) ? (float) 0.01 : n;
         }
     }
 
     private ArrayList<Float> getAllDateWeights(ArrayList<FIREInteraction> db) {
         ArrayList<Float> DateWeightsTemp = new ArrayList<Float>();
+
         float sum = 0;
+
+        //writeMsg("[1][DateWeights] Array Length: " + db.size());
+
         for(FIREInteraction f: db) {
             float res = getDateWeight(f.date);
             sum += res;
             DateWeightsTemp.add(res);
+            //writeMsg("[1][DateWeights] DateWeights - " + res);
         }
 
-        //normalize
-        for(Float f: DateWeightsTemp) {
-            f = f/sum;
-            //writeMsg("DateWeights - " + f);
+        //writeMsg("[1][DateWeights] Sum: " + sum);
+
+        if(Math.abs(sum) == (0 + 0.001)) {
+            DateWeightsTemp.set(0, (float) 1);
+            return DateWeightsTemp;
+        }
+
+        //normalize.
+        for(int i = 0; i < DateWeightsTemp.size(); i++) {
+            DateWeightsTemp.set(i, DateWeightsTemp.get(i)/sum);
+            //writeMsg("[1][DateWeights] DateWeights - " + DateWeightsTemp.get(i));
         }
 
         return DateWeightsTemp;
     }
 
     private float getRatingNumberReliability(int n, int m) {
-        //writeMsg("[RatingReliability] n - " + n + " m - " + m);
-        //writeMsg("[RatingReliability] n/m = " + ((float) n) / m);
+        //writeMsg("[1][RatingReliability] n - " + n + " m - " + m);
+        //writeMsg("[1][RatingReliability] n/m = " + ((float) n) / m);
         return n > m ? 1 : ((float) n)/m;
     }
 
     private float getDeviationReliability(float ti, ArrayList<Float> DateWeights, ArrayList<FIREInteraction> db) {
-        //writeMsg("[DeviationReliability] ti - " + ti);
+        //writeMsg("[1][DeviationReliability] ti - " + ti);
         float res = 0;
         for(int i = 0; i < DateWeights.size(); i++) {
-            res += (DateWeights.get(i)*Math.abs(db.get(i).rating - db.get(i).rating * DateWeights.get(i)))/2;
-            //writeMsg("[DeviationReliability] resTEMP - " + res);
+            res += (DateWeights.get(i)*Math.abs(db.get(i).rating - ti))/2;
+            writeMsg("[1][DeviationReliability] resTEMP - " + res);
         }
-        //writeMsg("[DeviationReliability] FINAL - " + (1-res));
+        writeMsg("[1][DeviationReliability] FINAL - " + (1-res));
 
         return 1 - res;
     }
@@ -83,6 +95,7 @@ public class FIREAgent extends BaseAnswerAgent {
         float deviationRating = 0;
         for(int i = 0; i < db.size(); i++) {
             res += db.get(i).rating * DateWeights.get(i);
+            //writeMsg("[1][Score] res: " + res + " | Added =" + db.get(i).rating +"*" +DateWeights.get(i)) ;
             deviationRating += (DateWeights.get(i)*Math.abs(db.get(i).rating - db.get(i).rating * DateWeights.get(i)))/2;
         }
         deviationRating = 1 - deviationRating;
@@ -90,7 +103,7 @@ public class FIREAgent extends BaseAnswerAgent {
     }
 
     private float getPastInteractionsReliability(float ti, ArrayList<Float> DateWeights, ArrayList<FIREInteraction> db) {
-        //writeMsg("[Reliability] 1 - " + getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) + "\n 2 - " + getDeviationReliability(ti, DateWeights, db));
+        writeMsg("[1][Reliability] 1 - " + getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) + " 2 - " + getDeviationReliability(ti, DateWeights, db));
         return getRatingNumberReliability(db.size(), RATING_NUMBER_THRESHOLD) * getDeviationReliability(ti, DateWeights, db);
     }
 
@@ -123,17 +136,17 @@ public class FIREAgent extends BaseAnswerAgent {
         float rel1 = 0;
         if(db.size() > 0) {
             res1 = getScorePastInteractions(db, DateWeights);
-            writeMsg("Calculted PastScore - " + String.valueOf(res1));
+            writeMsg("[1] Calculted PastScore - " + String.valueOf(res1));
             rel1 = getPastInteractionsReliability(res1, DateWeights, db);
-            writeMsg("Calculated PastReliability - " + String.valueOf((rel1)));
+            writeMsg("[1] Calculated PastReliability - " + String.valueOf((rel1)));
         }
 
         float res2 = getScoreRoles(getRoles(w.getLocalName(), this.getLocalName()));
-        writeMsg("Calculted RoleScore - " + String.valueOf(res2));
+        //writeMsg("Calculted RoleScore - " + String.valueOf(res2));
         float rel2 = getReliabilityRoles(getRoles(w.getLocalName(), this.getLocalName()));
-        writeMsg("Calculated RoleReliability - " + String.valueOf((rel2)));
+        //writeMsg("Calculated RoleReliability - " + String.valueOf((rel2)));
         //float component1 = getScore()
-        //writeMsg("FINAL - " + (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2));
+        //writeMsg("Final - " + (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2));
         return (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2);
     }
 
@@ -152,7 +165,7 @@ public class FIREAgent extends BaseAnswerAgent {
         for (AID w: wiseAgents) {
             scoreTemp = getScore(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()), w);
             //writeMsg("Length db - " + String.valueOf(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()).size()));
-            writeMsg("ScoreTemp - " + String.valueOf(scoreTemp) + " - Agent name = " + w.getLocalName());
+            writeMsg("ScoreTemp - " + String.valueOf(scoreTemp) + " - Agent name = " + w.getLocalName() + "\n");
             if (scoreTemp > maxScore) {
                 best =  w;
                 maxScore = scoreTemp;
@@ -174,6 +187,7 @@ public class FIREAgent extends BaseAnswerAgent {
         } catch (UnreadableException e) {
             writeMsg("Error");
         }
+
         if (ok.getPerformative() == ACLMessage.CONFIRM) {
             times_right++;
             //FIREDb.addInteraction(new FIREInteraction(this, ok.getSender(), question.getId(), String.valueOf(question.getOperator()), (float) 1));
