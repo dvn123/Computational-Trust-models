@@ -24,17 +24,16 @@ import util.Question;
 
 public class QuestionAgent extends Agent {
 
-	private static int[] agentsResults;
+	private static int[] agentsResults = new int[10];
 	private static Stack<Question> questions = new Stack<Question>();
 	private static ArrayList<AID> players;
 
 	protected void setup() {
 		players = getPlayers();
-		agentsResults = new int[players.size()];
 
-		for(int index = 0; index < agentsResults.length; index++) {
+		/*for(int index = 0; index < agentsResults.length; index++) {
 			agentsResults[index] = 0;
-		}
+		}*/
 
 		try {
 			Thread.sleep(1000);
@@ -159,7 +158,7 @@ public class QuestionAgent extends Agent {
 
 					if(result == question.getResult()) {
 						reply.setPerformative(ACLMessage.CONFIRM);
-						agentsResults[i] += 1;
+						agentsResults[i] = agentsResults[i] + 1;
 					}
 					else 
 						reply.setPerformative(ACLMessage.DISCONFIRM);
