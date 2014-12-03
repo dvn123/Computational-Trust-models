@@ -44,6 +44,7 @@ public class Question implements Serializable {
 		int operator = rand.nextInt(MAX_OPERATOR_NUMBER);
 		int op1 = rand.nextInt(MAX_OPERAND);
 		int op2 = rand.nextInt(MAX_OPERAND - 1) + 1;
+		//int operator=1;
 
 		return new Question(operator, op1, op2);
 	}
