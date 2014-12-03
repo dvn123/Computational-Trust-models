@@ -60,16 +60,18 @@ public class WiseAgent extends Agent {
     int tiredness_rest_limit;
     float tiredness_restored_per_rest;
 
-    float reply(Question q, String name) {
+    int reply(Question q, String name) {
         Random rand = new Random();
         if(!tiredness.keySet().contains(name))
         	initialize_tiredness(name);
         float knowledge_loc = knowledge[q.getOperator()] - tiredness.get(name)[q.getOperator()];
         updateTiredness(q, name);
-        if(rand.nextInt(101) < knowledge_loc) {
+        
+        int r = rand.nextInt(101);
+        if(r <= knowledge_loc) {
             return q.getResult();
         } else {
-            return q.getResult()*knowledge_loc + (1-knowledge_loc)*(rand.nextInt((MAX - MIN) + 1) + MIN);
+            return (int) Math.round(q.getResult()*knowledge_loc + (1-knowledge_loc)*(rand.nextInt((MAX - MIN) + 1) + MIN));
         }
     }
     
@@ -152,7 +154,7 @@ public class WiseAgent extends Agent {
 					writeMsg("Agree");
 					ACLMessage agree = request.createReply();
 					if(x != null) {
-						String value = Float.toString(reply(x, request.getSender().getLocalName()));
+						String value = Integer.toString(reply(x, request.getSender().getLocalName()));
 						writeMsg("result: " + value);
 						agree.setContent(value);
 					}

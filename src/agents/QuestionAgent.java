@@ -16,8 +16,6 @@ import jade.util.leap.Iterator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import util.Constants;
@@ -153,7 +151,7 @@ public class QuestionAgent extends Agent {
 
 					writeMsg("Agent "+answer.getSender().getLocalName()+" successfully performed the requested action");
 
-					double result = Double.parseDouble(answer.getContent());
+					int result = Integer.parseInt(answer.getContent());
 					writeMsg("Result returned by " + answer.getSender().getLocalName() + ": " + result);
 
 					ACLMessage reply = answer.createReply();
@@ -181,11 +179,11 @@ public class QuestionAgent extends Agent {
 				}
 			}
 			System.out.println("***********************************************************");
-			try {
-				Thread.sleep(900);
+			/*try {
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			}*/
 
 		}
 
@@ -199,12 +197,14 @@ public class QuestionAgent extends Agent {
 				break;
 		}
 
-
+		
 		if (i == players.size())
 			return 0;
+		
+		double ratio = (double) agentsResults[i] / (questions.size() == 0 ? 1 : questions.size()) * 100;
+		System.err.println("-------> " + agentsResults[i] + "/" + questions.size() + " = " + ratio + "   -  - " + agent);
 
-
-		return (double) agentsResults[i] / (questions.size() == 0 ? 1 : questions.size()) * 100;
+		return ratio;
 	}
 
 	public static int getNumberQuestions() {

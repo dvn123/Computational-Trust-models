@@ -48,12 +48,12 @@ public class Question implements Serializable {
         return new Question(operator, op1, op2);
     }
 
-    public float getResult() {
+    public int getResult() {
         float plus = operatorArray[OPERATOR_PLUS] * (op1 + op2);
         float minus = operatorArray[OPERATOR_MINUS] * (op1 - op2);
         float mul = operatorArray[OPERATOR_MUL] * (op1 * op2);
         float div = operatorArray[OPERATOR_DIV] * (op1 / op2);
-        return  plus + minus + mul + div;
+        return  (int) Math.round(plus + minus + mul + div);
     }
 
     public void printQuestion() {

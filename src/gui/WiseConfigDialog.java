@@ -206,10 +206,10 @@ public class WiseConfigDialog extends JDialog {
 		btnRandom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Random r = new Random();
-				textAddition.setText(Integer.toString(r.nextInt(70)));
-				textSubtractions.setText(Integer.toString(r.nextInt(70)));
-				textMultiplication.setText(Integer.toString(r.nextInt(70)));
-				textDivisions.setText(Integer.toString(r.nextInt(70)));
+				textAddition.setText(Integer.toString(r.nextInt(90)));
+				textSubtractions.setText(Integer.toString(r.nextInt(90)));
+				textMultiplication.setText(Integer.toString(r.nextInt(90)));
+				textDivisions.setText(Integer.toString(r.nextInt(90)));
 			}
 		});
 		btnRandom.setBounds(192, 229, 89, 23);

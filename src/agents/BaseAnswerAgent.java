@@ -1,30 +1,5 @@
 package agents;
 
-/**
- * ***************************************************************
- * JADE - Java Agent DEvelopment Framework is a framework to develop
- * multi-agent systems in compliance with the FIPA specifications.
- * Copyright (C) 2000 CSELT S.p.A.
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -83,9 +58,7 @@ public class BaseAnswerAgent extends Agent {
 			sd.setType(Constants.SERVICE_DESCRIPTION_TYPE_PLAYER);
 			// Agents that want to use this service need to "know" the weather-forecast-ontology
 			sd.addOntologies(Constants.SERVICE_DESCRIPTION_ONTOLOGY_PLAYER);
-			// Agents that want to use this service need to "speak" the FIPA-SL language
-			/*sd.addLanguages(FIPANames.ContentLanguage);
-	  		sd.addProperties(new Property("country", "Italy"));*/
+
 			dfd.addServices(sd);
 
 			DFService.register(this, dfd);
@@ -199,9 +172,9 @@ public class BaseAnswerAgent extends Agent {
 				writeMsg("Agree");
 				ACLMessage agree = request.createReply();
 
-				double y;
-				y = Double.parseDouble(wiseAnswer.getContent());
-				agree.setContent(Double.toString(y));
+				int y;
+				y = Integer.parseInt(wiseAnswer.getContent());
+				agree.setContent(Integer.toString(y));
 				writeMsg("Received from agent " + wiseAnswer.getSender().getLocalName()+ "sabio: " + y);
 
 				agree.setPerformative(ACLMessage.INFORM);

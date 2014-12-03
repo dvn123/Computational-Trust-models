@@ -52,7 +52,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		this.alpha0=(float)((3.0*Math.PI)/2.0);
 		this.lambda_pos=(float)1.00;
 		this.lambda_neg=(float)-1.50;
-		this.omega=(float)(Math.PI/5.0);
+		this.omega=(float)(Math.PI/12.0);
 		this.ro=(float)0.50;
 		
 		float[] initial_values={this.alpha0, calculateSinalpha(this.alpha0)};

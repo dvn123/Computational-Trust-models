@@ -8,9 +8,6 @@ package gui;
 
  */
 
-import java.util.Random;
-
-import agents.QuestionAgent;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -24,6 +21,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import agents.QuestionAgent;
 
 
 
@@ -149,7 +147,7 @@ public class AccuracyLineChart extends Application {
 
 		fireDataSeries = new XYChart.Series<Number,Number>();
 
-		fireDataSeries.setName("Fire");
+		fireDataSeries.setName("FIRE");
 		
 		randomDataSeries = new XYChart.Series<Number,Number>();
 		randomDataSeries.setName("Random");
@@ -176,9 +174,6 @@ public class AccuracyLineChart extends Application {
 		lc.getData().add(randomDataSeries);
 		
 		lc.setLegendVisible(true);
-		
-		System.err.println(lc.getPrefHeight());
-		System.err.println(lc.getPrefWidth());
 
 		return lc;
 
