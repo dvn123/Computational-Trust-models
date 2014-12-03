@@ -51,7 +51,7 @@ public class FIREAgent extends BaseAnswerAgent {
         //normalize
         for(Float f: DateWeightsTemp) {
             f = f/sum;
-            writeMsg("DateWeights - " + f);
+            //writeMsg("DateWeights - " + f);
         }
 
         return DateWeightsTemp;
@@ -121,15 +121,15 @@ public class FIREAgent extends BaseAnswerAgent {
         float rel1 = 0;
         if(db.size() > 0) {
             res1 = getScorePastInteractions(db, DateWeights);
-            writeMsg("[FIREAgent] Calculted PastScore - " + String.valueOf(res1));
+            writeMsg("Calculted PastScore - " + String.valueOf(res1));
             rel1 = getPastInteractionsReliability(res1, DateWeights, db);
-            writeMsg("[FIREAgent] Calculated PastReliability - " + String.valueOf((rel1)));
+            writeMsg("Calculated PastReliability - " + String.valueOf((rel1)));
         }
 
         float res2 = getScoreRoles(getRoles(w.getLocalName(), this.getLocalName()));
-        writeMsg("[FIREAgent] Calculted RoleScore - " + String.valueOf(res2));
+        writeMsg("Calculted RoleScore - " + String.valueOf(res2));
         float rel2 = getReliabilityRoles(getRoles(w.getLocalName(), this.getLocalName()));
-        writeMsg("[FIREAgent] Calculated RoleReliability - " + String.valueOf((rel2)));
+        writeMsg("Calculated RoleReliability - " + String.valueOf((rel2)));
         //float component1 = getScore()
         //writeMsg("FINAL - " + (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2));
         return (Constants.Component1Weight * rel1 * res1 + Constants.Component2Weight*rel2*res2)/(Constants.Component1Weight * rel1 + Constants.Component2Weight*rel2);
@@ -150,16 +150,16 @@ public class FIREAgent extends BaseAnswerAgent {
         for (AID w: wiseAgents) {
             scoreTemp = getScore(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()), w);
             //writeMsg("Length db - " + String.valueOf(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()).size()));
-            writeMsg("ScoreTemp - " + String.valueOf(scoreTemp));
-            writeMsg("MaxScore - " + String.valueOf(maxScore));
-            if (scoreTemp > maxScore) {
+            writeMsg("ScoreTemp - " + String.valueOf(scoreTemp) + " - Agent name = " + w.getLocalName());if (scoreTemp > maxScore) {
                 best =  w;
                 maxScore = scoreTemp;
             }
         }
         if(best == null)
-            writeMsg("NULL");
-        //writeMsg("Returned best agent - ");
+           System.exit(-1);
+
+
+        writeMsg("Returned best agent - " + best.getLocalName());
         FIREDb.addInteraction(new FIREInteraction(this.getLocalName(), best.getLocalName(), question.getId(), String.valueOf(question.getOperator()), (float) 0));
         return best;
     }

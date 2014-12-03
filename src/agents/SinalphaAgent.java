@@ -70,18 +70,18 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	private double calculateAlpha(double previous_alpha, ACLMessage message) {
 		
 		if(message.getPerformative()==ACLMessage.CONFIRM) {
-			System.out.println("---------> new alpha: " + (previous_alpha+this.lambda_pos*this.omega));
+			writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_pos * this.omega));
 			return previous_alpha+this.lambda_pos*this.omega;
 		}
 		else {
-			System.out.println("---------> new alpha: " + (previous_alpha+this.lambda_neg*this.omega));
+			writeMsg("---------> new alpha: " + (previous_alpha+this.lambda_neg*this.omega));
 			return previous_alpha+this.lambda_neg*this.omega;
 		}
 	}
 	
 	private double calculateSinalpha(double alpha) {
 		
-		System.out.println("---------> new sinalpha: " + (double)(this.ro*(Math.sin(alpha)+1)));
+		writeMsg("---------> new sinalpha: " + (double)(this.ro*(Math.sin(alpha)+1)));
 		return (double)(this.ro*(Math.sin(alpha)+1));
 	}
 	
