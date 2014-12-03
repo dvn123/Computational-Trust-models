@@ -89,12 +89,12 @@ public class WiseAgent extends Agent {
     	question_latest_loc[(q.getOperator() + 3)%4]++;
 
         for(int i = 0; i < question_latest_loc.length; i++) {
-        	System.out.println("QUESTION LATEST " + i + " = " + question_latest_loc[i]);
-        	System.out.println("TIREDNESS " + i + " = " + tiredness_loc[i]);
+        	writeTiredness("QUESTION LATEST " + i + " = " + question_latest_loc[i]);
+        	writeTiredness("TIREDNESS " + i + " = " + tiredness_loc[i]);
 
             if(question_latest_loc[i] > tiredness_rest_limit) {
             	tiredness_loc[i] = (tiredness_loc[i] - tiredness_restored_per_rest) < 0 ? 0 : tiredness_loc[i] - tiredness_restored_per_rest;
-            	System.out.println("RESTORING " + i + " = " + tiredness_loc[i]);
+            	writeTiredness("RESTORING " + i + " = " + tiredness_loc[i]);
             }
         }
 
@@ -143,7 +143,7 @@ public class WiseAgent extends Agent {
 				Question x = null;
 				try {
 					x = (Question) request.getContentObject();
-					x.printQuestion();
+					writeMsg(x.getStringQuestion());
 				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}
@@ -210,6 +210,11 @@ public class WiseAgent extends Agent {
 	
 	private void writeMsg(String msg) {
 		if (Constants.logWise)
+			System.out.println("Agent "+ getLocalName() + ": " + msg);
+	}
+	
+	private void writeTiredness(String msg) {
+		if (Constants.logWiseTiredness)
 			System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 }

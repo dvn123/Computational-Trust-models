@@ -32,8 +32,19 @@ public class Constants {
 	public static final int Component3Weight = 1;
 	
 	
-	public static boolean logManela = true;
-	public static boolean logFire = true;
-	public static boolean logWise = true;
+	public static boolean logManela = false;
+	public static boolean logFire = false;
+	public static boolean logWise = false;
+	public static boolean logWiseTiredness = false;
+	public static boolean logBaseAnswer = false;
+	
+	public static boolean printQuestions = false;
+	
+	
+	public static boolean printRatio = true;
+	
+	
+	
+	
 
 }

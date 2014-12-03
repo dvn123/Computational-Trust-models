@@ -139,7 +139,7 @@ public class BaseAnswerAgent extends Agent {
 				Question x = null;
 				try {
 					x = (Question) request.getContentObject();
-					x.printQuestion();
+					writeMsg(x.getStringQuestion());
 				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}
@@ -209,7 +209,7 @@ public class BaseAnswerAgent extends Agent {
 	}
 
 	protected void writeMsg(String msg) {
-		if (Constants.logFire)
+		if (Constants.logBaseAnswer)
 			System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 }

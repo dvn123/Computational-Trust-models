@@ -115,7 +115,7 @@ public class QuestionAgent extends Agent {
 
 		@Override
 		public void action() {
-			System.out.println("***********************************************************");
+			writeMsg("***********************************************************");
 
 			if (players != null && players.size() > 0) {
 				nResponders = players.size();
@@ -178,7 +178,7 @@ public class QuestionAgent extends Agent {
 					send(reply);
 				}
 			}
-			System.out.println("***********************************************************");
+			writeMsg("***********************************************************");
 			try {
 				Thread.sleep(900);
 			} catch (InterruptedException e) {
@@ -197,12 +197,14 @@ public class QuestionAgent extends Agent {
 				break;
 		}
 
-		
+
 		if (i == players.size())
 			return 0;
-		
-		double ratio = (double) agentsResults[i] / (questions.size() == 0 ? 1 : questions.size()) * 100;
-		System.err.println("-------> " + agentsResults[i] + "/" + questions.size() + " = " + ratio + "   -  - " + agent);
+
+		double ratio = (double) agentsResults[i] / (questions.size() == 0 ? 1 : questions.size()) * 100;	
+
+		if (Constants.printRatio)
+			System.err.println("-------> " + agentsResults[i] + "/" + questions.size() + " = " + ratio + "   -  - " + agent);
 
 		return ratio;
 	}
