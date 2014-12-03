@@ -52,7 +52,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		this.alpha0=(double)((3.0*Math.PI)/2.0);
 		this.lambda_pos=(double)1.00;
 		this.lambda_neg=(double)-1.50;
-		this.omega=(double)(Math.PI/4.0);
+		this.omega=(double)(Math.PI/12.0);
 		this.ro=(double)0.50;
 		
 		double[] initial_values={this.alpha0, calculateSinalpha(this.alpha0)};
@@ -188,6 +188,8 @@ public class SinalphaAgent extends BaseAnswerAgent {
 					best=key;
 				} 
 			}
+			
+			System.out.println("---------------->sinalpha: " + agents.get(key)[SINALPHA_POS]);
 		}
 		
 		for (AID key : agents.keySet()) {
@@ -201,7 +203,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			int agent = rand.nextInt(equalBests.size());
 			best = equalBests.get(agent);
 		}
-	
+		System.out.println("-------------------> escolhido: " + bestValue);
 		return best;
 	}
 
