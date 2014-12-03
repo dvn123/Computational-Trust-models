@@ -41,6 +41,7 @@ import jade.proto.AchieveREResponder;
 import util.Constants;
 import util.Question;
 
+import java.util.HashMap;
 import java.util.Random;
 
 
@@ -52,41 +53,50 @@ public class WiseAgent extends Agent {
 
 	String role;
 
-    float[] tiredness;
-    int[] question_latest;
+    HashMap<String, float[]> tiredness;
+    HashMap<String,int[]> question_latest;
 
     float tiredness_factor;
     int tiredness_rest_limit;
     float tiredness_restored_per_rest;
 
-    float reply(Question q) {
+    float reply(Question q, String name) {
         Random rand = new Random();
-        float knowledge_loc = knowledge[q.getOperator()] - tiredness[q.getOperator()];
-        updateTiredness(q);
+        if(!tiredness.keySet().contains(name))
+        	initialize_tiredness(name);
+        float knowledge_loc = knowledge[q.getOperator()] - tiredness.get(name)[q.getOperator()];
+        updateTiredness(q, name);
         if(rand.nextInt(101) < knowledge_loc) {
             return q.getResult();
         } else {
             return q.getResult()*knowledge_loc + (1-knowledge_loc)*(rand.nextInt((MAX - MIN) + 1) + MIN);
         }
     }
+    
+    void initialize_tiredness(String name) {
+    	tiredness.put(name, new float[] {0,0,0,0});
+    	question_latest.put(name, new int[] {999,999,999,999});
+    }
 
-    void updateTiredness(Question q) {
-        question_latest[q.getOperator()] = 0;
-        question_latest[(q.getOperator() + 1)%4]++;
-        question_latest[(q.getOperator() + 2)%4]++;
-        question_latest[(q.getOperator() + 3)%4]++;
+    void updateTiredness(Question q, String name) {
+    	int[] question_latest_loc = question_latest.get(name);
+    	float[] tiredness_loc = tiredness.get(name);
+    	question_latest_loc[q.getOperator()] = 0;
+    	question_latest_loc[(q.getOperator() + 1)%4]++;
+    	question_latest_loc[(q.getOperator() + 2)%4]++;
+    	question_latest_loc[(q.getOperator() + 3)%4]++;
 
-        for(int i = 0; i < question_latest.length; i++) {
-        	System.out.println("QUESTION LATEST " + i + " = " + question_latest[i]);
-        	System.out.println("TIREDNESS " + i + " = " + tiredness[i]);
+        for(int i = 0; i < question_latest_loc.length; i++) {
+        	System.out.println("QUESTION LATEST " + i + " = " + question_latest_loc[i]);
+        	System.out.println("TIREDNESS " + i + " = " + tiredness_loc[i]);
 
-            if(question_latest[i] > tiredness_rest_limit) {
-                tiredness[i] = (tiredness[i] - tiredness_restored_per_rest) < 0 ? 0 : tiredness[i] - tiredness_restored_per_rest;
-            	System.out.println("RESTORING " + i + " = " + tiredness[i]);
+            if(question_latest_loc[i] > tiredness_rest_limit) {
+            	tiredness_loc[i] = (tiredness_loc[i] - tiredness_restored_per_rest) < 0 ? 0 : tiredness_loc[i] - tiredness_restored_per_rest;
+            	System.out.println("RESTORING " + i + " = " + tiredness_loc[i]);
             }
         }
 
-        tiredness[q.getOperator()] = tiredness[q.getOperator()] + tiredness_factor;
+        tiredness_loc[q.getOperator()] = tiredness_loc[q.getOperator()] + tiredness_factor;
     }
 
 	protected void setup() {
@@ -113,8 +123,8 @@ public class WiseAgent extends Agent {
             tiredness_rest_limit = 5;
         }
 
-        tiredness = new float[] {0,0,0,0};
-        question_latest = new int[] {999,999,999,999};
+        tiredness = new HashMap<String, float[]>();
+        question_latest = new HashMap<String, int[]>();
 		
         writeMsg("knowledge: " + knowledge[0] + " " + knowledge[1] + " " + knowledge[2] + " " + knowledge[3] + " " ); 
 		registerWise();
@@ -142,7 +152,7 @@ public class WiseAgent extends Agent {
 					writeMsg("Agree");
 					ACLMessage agree = request.createReply();
 					if(x != null) {
-						String value = Float.toString(reply(x));
+						String value = Float.toString(reply(x, request.getSender().getLocalName()));
 						writeMsg("result: " + value);
 						agree.setContent(value);
 					}
