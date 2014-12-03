@@ -77,8 +77,12 @@ public class WiseAgent extends Agent {
         question_latest[(q.getOperator() + 3)%4]++;
 
         for(int i = 0; i < question_latest.length; i++) {
+        	System.out.println("QUESTION LATEST " + i + " = " + question_latest[i]);
+        	System.out.println("TIREDNESS " + i + " = " + tiredness[i]);
+
             if(question_latest[i] > tiredness_rest_limit) {
                 tiredness[i] = (tiredness[i] - tiredness_restored_per_rest) < 0 ? 0 : tiredness[i] - tiredness_restored_per_rest;
+            	System.out.println("RESTORING " + i + " = " + tiredness[i]);
             }
         }
 
@@ -193,7 +197,8 @@ public class WiseAgent extends Agent {
 	}
 	
 	private void writeMsg(String msg) {
-		System.out.println("Agent "+ getLocalName() + ": " + msg);
+		if (Constants.logWise)
+			System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 }
 

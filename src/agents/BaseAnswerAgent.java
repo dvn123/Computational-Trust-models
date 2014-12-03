@@ -236,7 +236,8 @@ public class BaseAnswerAgent extends Agent {
 	}
 
 	protected void writeMsg(String msg) {
-		System.out.println("Agent "+ getLocalName() + ": " + msg);
+		if (Constants.logFire)
+			System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 }
 

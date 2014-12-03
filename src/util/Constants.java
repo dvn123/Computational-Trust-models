@@ -30,5 +30,10 @@ public class Constants {
 	public static final int Component1Weight = 1;
 	public static final int Component2Weight = 1;
 	public static final int Component3Weight = 1;
+	
+	
+	public static boolean logManela = false;
+	public static boolean logFire = false;
+	public static boolean logWise = false;
 
 }

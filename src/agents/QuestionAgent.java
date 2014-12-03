@@ -33,7 +33,7 @@ public class QuestionAgent extends Agent {
 	protected void setup() {
 		players = getPlayers();
 		agentsResults = new int[players.size()];
-		
+
 		for(int index = 0; index < agentsResults.length; index++) {
 			agentsResults[index] = 0;
 		}
@@ -43,7 +43,7 @@ public class QuestionAgent extends Agent {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (players != null && players.size() > 0)
 			addBehaviour(new QuestioningBehaviour(this, players));
 		else
@@ -82,7 +82,7 @@ public class QuestionAgent extends Agent {
 						if (sd.getType().equals(Constants.SERVICE_DESCRIPTION_TYPE_PLAYER)) {
 							writeMsg("- Service \""+sd.getName()+"\" provided by player "+provider.getName());
 							agentsFound.add(provider);
-							
+
 						}
 					}
 				}
@@ -98,7 +98,8 @@ public class QuestionAgent extends Agent {
 	} 
 
 	private void writeMsg(String msg) {
-		System.out.println("Agent "+ getLocalName() + ": " + msg);
+		if (Constants.logManela)
+			System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 
 	private class QuestioningBehaviour extends CyclicBehaviour {
@@ -134,9 +135,9 @@ public class QuestionAgent extends Agent {
 				//msg.setContent("dummy-action");
 
 				questions.push(Question.generateQuestion());
-				
+
 				Question question = questions.peek();
-				
+
 
 				try {
 					msg.setContentObject(question);
@@ -164,16 +165,16 @@ public class QuestionAgent extends Agent {
 					}
 					else 
 						reply.setPerformative(ACLMessage.DISCONFIRM);
-					
-					
+
+
 					reply.setContent(Integer.toString(question.getId()));
-					
+
 					try {
 						reply.setContentObject(question);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					
+
 					writeMsg("Operation result: " + question.getResult());
 					writeMsg("Sending solution to " + answer.getSender().getLocalName());
 					send(reply);
@@ -185,27 +186,27 @@ public class QuestionAgent extends Agent {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
-		
+
 	}
 
 	public static double getAgentRatio(String agent) {
 		int i;
 		for (i = 0; i < players.size(); i++) {
-			
+
 			if(players.get(i).getLocalName().equals(agent))
 				break;
 		}
-		
-		
+
+
 		if (i == players.size())
 			return 0;
 
-		
+
 		return (double) agentsResults[i] / (questions.size() == 0 ? 1 : questions.size()) * 100;
 	}
-	
+
 	public static int getNumberQuestions() {
 		return questions.size();
 	}
