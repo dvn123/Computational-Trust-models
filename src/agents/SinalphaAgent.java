@@ -23,7 +23,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private float alpha0, lambda_pos, lambda_neg, omega, ro;
 	
-	public SinalphaAgent() {
+	/*public SinalphaAgent() {
 		
 		this.alpha0=(float)((3.0*Math.PI)/2.0);
 		this.lambda_pos=(float)1.00;
@@ -31,7 +31,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		this.omega=(float)(Math.PI/12.0);
 		this.ro=(float)0.50;
 		
-		initialize();
+		init();
 	}
 	
 	public SinalphaAgent(float alpha0, float lambda_pos, float lambda_neg, float omega) {
@@ -42,10 +42,16 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		this.omega=omega;
 		this.ro=(float)0.50;
 		
-		initialize();
-	}
+		init();
+	}*/
 	
-	private void initialize() {
+	protected void init() {
+		
+		this.alpha0=(float)((3.0*Math.PI)/2.0);
+		this.lambda_pos=(float)1.00;
+		this.lambda_neg=(float)-1.50;
+		this.omega=(float)(Math.PI/5.0);
+		this.ro=(float)0.50;
 		
 		float[] initial_values={this.alpha0, calculateSinalpha(this.alpha0)};
 		
@@ -152,7 +158,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private AID compareAndReturnBestAgent(Map<AID, float[]> agents) {
 		
-		//TODO: caso em que são os valores todos iguais? que fazer?
+		//TODO: caso em que sï¿½o os valores todos iguais? que fazer?
 		
 		AID best=null;
 		float bestValue = 0, currentValue;

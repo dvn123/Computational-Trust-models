@@ -50,18 +50,19 @@ import util.Question;
 
 public class BaseAnswerAgent extends Agent {
 	protected ArrayList<AID> wiseAgents = null;
-	
+
+
 
 	protected void setup() {
 		String serviceName = Constants.SERVICE_NAME_PLAYER;
 		// Read the name of the service to register as an argument
 		Object[] args = getArguments();
-		
+
 		//Find wise agents
 		registerPlayer(serviceName, args);
 		wiseAgents = getWiseAgents();
-		
 
+		init();
 		writeMsg("waiting for requests...");
 
 		addBehaviour(new AnswearingBehaviour(this));
@@ -93,12 +94,12 @@ public class BaseAnswerAgent extends Agent {
 			fe.printStackTrace();
 		}
 	}
-	
+
 	private ArrayList<AID> getWiseAgents() {
 		ArrayList<AID> agentsFound = new ArrayList<AID>();
-		
+
 		writeMsg("searching for wise agents...");
-		
+
 		try {
 			// Build the description used as template for the search
 			DFAgentDescription template = new DFAgentDescription();
@@ -140,7 +141,7 @@ public class BaseAnswerAgent extends Agent {
 
 	protected AID getBestWiseAgent(Question question) {
 		//taking care question type do something
-		
+
 		Random x = new Random();
 		int index = x.nextInt(wiseAgents.size());
 		return wiseAgents.get(index);
@@ -208,7 +209,7 @@ public class BaseAnswerAgent extends Agent {
 				send(agree);
 
 				ACLMessage ok = blockingReceive(MessageTemplate.MatchOntology(Constants.SOLUTION_ONTOLOGY),50000);
-				
+
 				//taking care of the answer
 				handleSolution(ok);
 			}
@@ -219,9 +220,9 @@ public class BaseAnswerAgent extends Agent {
 
 		}
 
-		
+
 	}
-	
+
 	protected void handleSolution(ACLMessage ok) {
 		if (ok.getPerformative() == ACLMessage.CONFIRM)
 			writeMsg(ok.getSender().getLocalName() + " - Answer is correct");
@@ -230,7 +231,10 @@ public class BaseAnswerAgent extends Agent {
 		else 
 			writeMsg(ok.getSender().getLocalName() + " - estás tolo");
 	}
-	
+	protected void init() {
+
+	}
+
 	protected void writeMsg(String msg) {
 		System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}

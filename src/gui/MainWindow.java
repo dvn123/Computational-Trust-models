@@ -25,6 +25,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import util.Constants;
+import util.FIRERelation;
+import util.FIRERule;
 import util.WiseData;
 
 public class MainWindow {
@@ -124,6 +127,17 @@ public class MainWindow {
 		JButton btnStartSimulation = new JButton("Start simulation");
 		btnStartSimulation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				Constants.roleValues.put("mathematician", new FIRERule("cs_student", (float) 1, (float) 1));
+				Constants.roleValues.put("high_school_dropout", new FIRERule("cs_student", (float) -0.5, (float) 0.2));
+				Constants.roleValues.put("neanderthal", new FIRERule("cs_student", (float) -1, (float) 1));
+				Constants.roleValues.put("cs_student", new FIRERule("cs_student", (float) 0.8, (float) 0.7));
+				Constants.roleValues.put("kind", new FIRERule("kind", (float) 0.2, (float) 0.4));
+				Constants.roleValues.put("evil", new FIRERule("evil", (float) -0.6, (float) 0.4));
+
+				Constants.relations.add(new FIRERelation("socrates", "", Constants.roleValues.get("evil")));
+				Constants.relations.add(new FIRERelation("diogo", "", Constants.roleValues.get("cs_student")));
+				Constants.relations.add(new FIRERelation("diogo", "", Constants.roleValues.get("kind")));
+				Constants.relations.add(new FIRERelation("villate", "", Constants.roleValues.get("mathematician")));
 				
 				if (wiseAgents.size() < 1) {
 					JOptionPane.showMessageDialog(new JFrame(), "You must add at least one agent!", "ERROR",
@@ -167,7 +181,9 @@ public class MainWindow {
 					}
 					
 					cc.createNewAgent("fire","agents.FIREAgent" ,null).start();
-					cc.createNewAgent("sinalpha","agents.BaseAnswerAgent" ,null).start();
+					
+					cc.createNewAgent("sinalpha","agents.SinalphaAgent" ,null).start();
+					cc.createNewAgent("random","agents.BaseAnswerAgent" ,null).start();
 					Thread.sleep(100);
 					cc.createNewAgent("manela","agents.QuestionAgent" ,null).start();
 
