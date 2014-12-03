@@ -134,7 +134,7 @@ public class BaseAnswerAgent extends Agent {
 			ACLMessage request = myAgent.receive(template);
 
 			if (request != null) {
-				writeMsg("REQUEST received from "+request.getSender().getLocalName() + " type: " + request.getPerformative()); //+". Action is "+request.getContent());
+				//writeMsg("REQUEST received from "+request.getSender().getLocalName() + " type: " + request.getPerformative()); //+". Action is "+request.getContent());
 
 				Question x = null;
 				try {
@@ -150,7 +150,7 @@ public class BaseAnswerAgent extends Agent {
 
 				//Algorithm to 
 				msg.addReceiver(getBestWiseAgent(x));
-				writeMsg("Received best agent FIRE");
+				//writeMsg("Received best agent FIRE");
 
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				// We want to receive a reply in 10 secs
@@ -169,13 +169,13 @@ public class BaseAnswerAgent extends Agent {
 				// We agree to perform the action. Note that in the FIPA-Request
 				// protocol the AGREE message is optional. Return null if you
 				// don't want to send it.
-				writeMsg("Agree");
+				//writeMsg("Agree");
 				ACLMessage agree = request.createReply();
 
 				int y;
 				y = Integer.parseInt(wiseAnswer.getContent());
 				agree.setContent(Integer.toString(y));
-				writeMsg("Received from agent " + wiseAnswer.getSender().getLocalName()+ "sabio: " + y);
+				//writeMsg("Received from agent " + wiseAnswer.getSender().getLocalName()+ "sabio: " + y);
 
 				agree.setPerformative(ACLMessage.INFORM);
 

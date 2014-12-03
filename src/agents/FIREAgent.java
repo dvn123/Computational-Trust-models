@@ -22,10 +22,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class FIREAgent extends BaseAnswerAgent {
-    MessageTemplate template = MessageTemplate.and(
-            MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
-            MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
+    MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST), MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+
     public static final int RATING_NUMBER_THRESHOLD = 10;
+
+    public int times_right = 0;
+    public int times_wrong = 0;
 
     private float getDateWeight(Date t1) {
         Date now = new Date();
@@ -150,7 +152,8 @@ public class FIREAgent extends BaseAnswerAgent {
         for (AID w: wiseAgents) {
             scoreTemp = getScore(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()), w);
             //writeMsg("Length db - " + String.valueOf(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()).size()));
-            writeMsg("ScoreTemp - " + String.valueOf(scoreTemp) + " - Agent name = " + w.getLocalName());if (scoreTemp > maxScore) {
+            writeMsg("ScoreTemp - " + String.valueOf(scoreTemp) + " - Agent name = " + w.getLocalName());
+            if (scoreTemp > maxScore) {
                 best =  w;
                 maxScore = scoreTemp;
             }
@@ -172,14 +175,19 @@ public class FIREAgent extends BaseAnswerAgent {
             writeMsg("Error");
         }
         if (ok.getPerformative() == ACLMessage.CONFIRM) {
+            times_right++;
             //FIREDb.addInteraction(new FIREInteraction(this, ok.getSender(), question.getId(), String.valueOf(question.getOperator()), (float) 1));
             FIREDb.addRating(question.getId(), (float) 1);
         } else if (ok.getPerformative() == ACLMessage.DISCONFIRM) {
+            times_wrong++;
             //FIREDb.addInteraction(new FIREInteraction(this, ok.getSender(), question.getId(), String.valueOf(question.getOperator()), (float) -1));
             FIREDb.addRating(question.getId(), (float) -1);
         } else {
             writeMsg(ok.getSender().getLocalName() + " - estás tolo");
         }
+        writeMsg("###################");
+        writeMsg("Times Right - " + times_right + ", Times Wrong - " + times_wrong + ", Ratio: " + times_right/((float) times_right + times_wrong));
+        writeMsg("###################");
         super.handleSolution(ok);
     }
     
