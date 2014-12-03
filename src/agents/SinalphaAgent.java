@@ -16,46 +16,48 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	private static final Integer ALPHA_POS=0;
 	private static final Integer SINALPHA_POS=1;
 	
-	private Map <AID, float[]> addition = new HashMap<AID, float[]>();
-	private Map <AID, float[]> subtraction = new HashMap<AID, float[]>();
-	private Map <AID, float[]> multiplication = new HashMap<AID, float[]>();
-	private Map <AID, float[]> division = new HashMap<AID, float[]>();
+	private Map <AID, double[]> addition = new HashMap<AID, double[]>();
+	private Map <AID, double[]> subtraction = new HashMap<AID, double[]>();
+	private Map <AID, double[]> multiplication = new HashMap<AID, double[]>();
+	private Map <AID, double[]> division = new HashMap<AID, double[]>();
 	
 	private Map <Integer, AID> questions = new HashMap<Integer, AID>();
 	
-	private float alpha0, lambda_pos, lambda_neg, omega, ro;
+	private double alpha0, lambda_pos, lambda_neg, omega, ro;
 	
 	/*public SinalphaAgent() {
 		
-		this.alpha0=(float)((3.0*Math.PI)/2.0);
-		this.lambda_pos=(float)1.00;
-		this.lambda_neg=(float)-1.50;
-		this.omega=(float)(Math.PI/12.0);
-		this.ro=(float)0.50;
+		this.alpha0=(double)((3.0*Math.PI)/2.0);
+		this.lambda_pos=(double)1.00;
+		this.lambda_neg=(double)-1.50;
+		this.omega=(double)(Math.PI/12.0);
+		this.ro=(double)0.50;
 		
 		init();
 	}
 	
-	public SinalphaAgent(float alpha0, float lambda_pos, float lambda_neg, float omega) {
+	public SinalphaAgent(double alpha0, double lambda_pos, double lambda_neg, double omega) {
 		
 		this.alpha0=alpha0;
 		this.lambda_pos=lambda_pos;
 		this.lambda_neg=lambda_neg;
 		this.omega=omega;
-		this.ro=(float)0.50;
+		this.ro=(double)0.50;
 		
 		init();
 	}*/
 	
 	protected void init() {
 		
-		this.alpha0=(float)((3.0*Math.PI)/2.0);
-		this.lambda_pos=(float)1.00;
-		this.lambda_neg=(float)-1.50;
-		this.omega=(float)(Math.PI/12.0);
-		this.ro=(float)0.50;
+		this.alpha0=(double)((3.0*Math.PI)/2.0);
+		this.lambda_pos=(double)1.00;
+		this.lambda_neg=(double)-1.50;
+		this.omega=(double)(Math.PI/5.0);
+		this.ro=(double)0.50;
 		
-		float[] initial_values={this.alpha0, calculateSinalpha(this.alpha0)};
+		double[] initial_values={this.alpha0, calculateSinalpha(this.alpha0)};
+		
+		System.out.println("---------> alpha0: " + this.alpha0 + " sinalpha0: " + initial_values[SINALPHA_POS]);
 		
 		for(int i=0; i<wiseAgents.size(); i++) {
 			addition.put(wiseAgents.get(i), initial_values);
@@ -65,23 +67,28 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		}
 	}
 	
-	private float calculateAlpha(float previous_alpha, ACLMessage message) {
+	private double calculateAlpha(double previous_alpha, ACLMessage message) {
 		
-		if(message.getPerformative()==ACLMessage.CONFIRM)
+		if(message.getPerformative()==ACLMessage.CONFIRM) {
+			System.out.println("---------> new alpha: " + (previous_alpha+this.lambda_pos*this.omega));
 			return previous_alpha+this.lambda_pos*this.omega;
-		else
+		}
+		else {
+			System.out.println("---------> new alpha: " + (previous_alpha+this.lambda_neg*this.omega));
 			return previous_alpha+this.lambda_neg*this.omega;
+		}
 	}
 	
-	private float calculateSinalpha(float alpha) {
+	private double calculateSinalpha(double alpha) {
 		
-		return (float)(this.ro*(Math.sin(alpha)+1));
+		System.out.println("---------> new sinalpha: " + (double)(this.ro*(Math.sin(alpha)+1)));
+		return (double)(this.ro*(Math.sin(alpha)+1));
 	}
 	
 	private void calculateAlgorithmSteps(AID agent_id, int type, ACLMessage message) {
 		
-		float[] values = new float[2];
-		float[] new_values;
+		double[] values = new double[2];
+		double[] new_values;
 		
 		switch (type)
 		{
@@ -123,9 +130,9 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		}
 	}
 
-	private float[] calculateAgentValues(float[] values, ACLMessage message) {
+	private double[] calculateAgentValues(double[] values, ACLMessage message) {
 		
-		float[] new_values = new float[2];
+		double[] new_values = new double[2];
 		
 		if(values!=null) {
 			
@@ -160,12 +167,12 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		return null;
 	}
 	
-	private AID compareAndReturnBestAgent(Map<AID, float[]> agents) {
+	private AID compareAndReturnBestAgent(Map<AID, double[]> agents) {
 		
 		AID best=null;
-		float bestValue = 0, currentValue;
+		double bestValue = 0, currentValue;
 		boolean firstValue=true;
-		Vector<AID> equalBests = new Vector<AID>();
+		//Vector<AID> equalBests = new Vector<AID>();
 		
 		for (AID key : agents.keySet()) {
 			
@@ -183,7 +190,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			}
 		}
 		
-		for (AID key : agents.keySet()) {
+		/*for (AID key : agents.keySet()) {
 			if(agents.get(key)[SINALPHA_POS]==bestValue)
 				equalBests.addElement(key);
 		}
@@ -194,7 +201,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			int agent = rand.nextInt(equalBests.size());
 			best = equalBests.get(agent);
 		}
-		
+		*/
 		return best;
 	}
 
