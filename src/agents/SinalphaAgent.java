@@ -15,6 +15,9 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private static final Integer ALPHA_POS=0;
 	private static final Integer SINALPHA_POS=1;
+	private static final double ALPHA_MIN=(double)((3.0*Math.PI)/2.0);
+	private static final double ALPHA_MAX=(double)((5.0*Math.PI)/2.0);
+	
 	
 	private Map <AID, double[]> addition = new HashMap<AID, double[]>();
 	private Map <AID, double[]> subtraction = new HashMap<AID, double[]>();
@@ -69,13 +72,27 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private double calculateAlpha(double previous_alpha, ACLMessage message) {
 		
+		double value=0;
 		if(message.getPerformative()==ACLMessage.CONFIRM) {
+			
 			writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_pos * this.omega));
-			return previous_alpha+this.lambda_pos*this.omega;
+			
+			value = previous_alpha+this.lambda_pos*this.omega;
+			
+			if(value>ALPHA_MAX)
+				return ALPHA_MAX;
+			
+			return value;
 		}
 		else {
 			writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_neg * this.omega));
-			return previous_alpha+this.lambda_neg*this.omega;
+			
+			value = previous_alpha+this.lambda_neg*this.omega;
+			
+			if(value<ALPHA_MIN)
+				return ALPHA_MIN;
+			
+			return value;
 		}
 	}
 	
