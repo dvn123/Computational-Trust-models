@@ -73,6 +73,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	private double calculateAlpha(double previous_alpha, ACLMessage message) {
 		
 		double value=0;
+		
 		if(message.getPerformative()==ACLMessage.CONFIRM) {
 			
 			writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_pos * this.omega));
