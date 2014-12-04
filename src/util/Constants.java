@@ -33,7 +33,7 @@ public class Constants {
 	
 	
 	public static boolean logManela = false;
-	public static boolean logFire = true;
+	public static boolean logFire = false;
 	public static boolean logWise = false;
 	public static boolean logWiseTiredness = false;
 	public static boolean logBaseAnswer = false;

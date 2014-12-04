@@ -25,10 +25,6 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private double alpha0, lambda_pos, lambda_neg, omega, ro;
 	
-	private int total = 0;
-	private int correct = 0;
-	private int wrong = 0;
-	
 	/*public SinalphaAgent() {
 		
 		this.alpha0=(double)((3.0*Math.PI)/2.0);
@@ -212,15 +208,10 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	}
 
 	protected void handleSolution(ACLMessage message) {
-		total++;
-		if (message.getPerformative() == ACLMessage.CONFIRM) {
-			correct++;
+		if (message.getPerformative() == ACLMessage.CONFIRM) 
 			writeMsg(message.getSender().getLocalName() + " - Answer is correct");
-		}
-		else if (message.getPerformative() == ACLMessage.DISCONFIRM) {
-			wrong++;
+		else if (message.getPerformative() == ACLMessage.DISCONFIRM) 
 			writeMsg(message.getSender().getLocalName() + " - Answer is incorrect");
-		}
 		else 
 			writeMsg(message.getSender().getLocalName() + " - estas tolo");
 		
@@ -236,10 +227,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println("////////////////////////////////////////////////////");
-		System.out.println("Total: " + total + "  correct: " + correct + " wrong: " + wrong);
-		System.out.println("////////////////////////////////////////////////////");
+	
 	}
 	
 	protected AID getBestWiseAgent(Question question) {

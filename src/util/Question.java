@@ -5,7 +5,7 @@ import java.util.Random;
 
 
 public class Question implements Serializable {
-	public static final int MAX_OPERATOR_NUMBER = 4;
+	public static final int MAX_OPERATOR_NUMBER = 2; //TODO: Change to 4
 	public static final int MAX_OPERAND = 100;
 	public static final int OPERATOR_PLUS = 0;
 	public static final int OPERATOR_MINUS = 1;
