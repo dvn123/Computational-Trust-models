@@ -158,7 +158,8 @@ public class QuestionAgent extends Agent {
 
 					if(result == question.getResult()) {
 						reply.setPerformative(ACLMessage.CONFIRM);
-						agentsResults[i] = agentsResults[i] + 1;
+						int agentIndex = getAgentIndex(answer.getSender().getLocalName());
+						agentsResults[agentIndex] += 1;
 					}
 					else 
 						reply.setPerformative(ACLMessage.DISCONFIRM);
@@ -189,15 +190,9 @@ public class QuestionAgent extends Agent {
 	}
 
 	public static double getAgentRatio(String agent) {
-		int i;
-		for (i = 0; i < players.size(); i++) {
-
-			if(players.get(i).getLocalName().equals(agent))
-				break;
-		}
-
-
-		if (i == players.size())
+		int i = getAgentIndex(agent);
+		
+		if (i < 0)
 			return 0;
 
 		double ratio = (double) agentsResults[i] / (questions.size() == 0 ? 1 : questions.size()) * 100;	
@@ -210,6 +205,21 @@ public class QuestionAgent extends Agent {
 
 	public static int getNumberQuestions() {
 		return questions.size();
+	}
+	
+	public static int getAgentIndex(String localName) {
+		int i;
+		for (i = 0; i < players.size(); i++) {
+
+			if(players.get(i).getLocalName().equals(localName))
+				break;
+		}
+
+
+		if (i == players.size())
+			return -1;
+		
+		return i;
 	}
 }
 
