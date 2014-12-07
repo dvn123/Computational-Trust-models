@@ -21,6 +21,7 @@ public class Constants {
 	static public String SOLUTION_ONTOLOGY = "solution";
 	static public String WISE_CONVERSATION_ONTOLOGY = "wise-conversation-ontology";
 
+	static public String SPLIT_STRING = "@at@";
 
 	//Roles
 	static public HashMap<String, FIRERule> roleValues = new HashMap<String, FIRERule>();

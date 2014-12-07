@@ -5,7 +5,7 @@ import java.util.Random;
 
 
 public class Question implements Serializable {
-	public static final int MAX_OPERATOR_NUMBER = 2; //TODO: Change to 4
+	public static final int MAX_OPERATOR_NUMBER = 4;
 	public static final int MAX_OPERAND = 100;
 	public static final int OPERATOR_PLUS = 0;
 	public static final int OPERATOR_MINUS = 1;
@@ -59,11 +59,11 @@ public class Question implements Serializable {
 
 	public void printQuestion() {
 		if (Constants.printQuestions)
-			System.out.println("Q: " + op1 + " " + operatorStringArray[operator] + " " + op2);
+			System.out.println("Q" + id + ": " + op1 + " " + operatorStringArray[operator] + " " + op2);
 	}
 	
 	public String getStringQuestion() {
-		return "Q: " + op1 + " " + operatorStringArray[operator] + " " + op2;
+		return "Q" + id + ": " + op1 + " " + operatorStringArray[operator] + " " + op2;
 	}
 
 	public int getOperator() {

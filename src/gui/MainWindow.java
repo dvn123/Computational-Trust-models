@@ -12,6 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,12 +28,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import agents.QuestionAgent;
 import util.Constants;
 import util.FIRERelation;
 import util.FIRERule;
+import util.Question;
 import util.WiseData;
 
 public class MainWindow {
@@ -37,6 +44,8 @@ public class MainWindow {
 	private Map wiseAgents = new HashMap<String, WiseData>();
 	private WiseData lastWiseAdded = new WiseData();
 	private JList list;
+	private PrintWriter writer = null;
+
 
 	/**
 	 * Launch the application.
@@ -138,17 +147,32 @@ public class MainWindow {
 				Constants.relations.add(new FIRERelation("diogo", "", Constants.roleValues.get("cs_student")));
 				Constants.relations.add(new FIRERelation("diogo", "", Constants.roleValues.get("kind")));
 				Constants.relations.add(new FIRERelation("villate", "", Constants.roleValues.get("mathematician")));
-				
+
 				if (wiseAgents.size() < 1) {
 					JOptionPane.showMessageDialog(new JFrame(), "You must add at least one agent!", "ERROR",
-					        JOptionPane.ERROR_MESSAGE);
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
 
+				Calendar cal = Calendar.getInstance();
+				Date date = cal.getTime();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
+				SimpleDateFormat sdf2 = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+				try {
+					writer = new PrintWriter("log/log_" + sdf.format(date) + ".html", "UTF-8");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (UnsupportedEncodingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 
-
-
+				writer.println("<html><head></head><body><h2>" + sdf2.format(date) +"</h2><br> ");
+				writer.println("<span><a href=\"#wise-agents\">Wise Agents</a> | <a href=\"#players-agents\">Players Agents</a> | <a href=\"#questions\">Questions</a></span>");
+				writer.println("<h1 id=\"wise-agents\">Wise agents</h1><div>");
 
 				Runtime rt = Runtime.instance(); 
 				// Create a default profile 
@@ -178,14 +202,47 @@ public class MainWindow {
 						cc.createNewAgent((String)pairs.getKey(),"agents.WiseAgent" ,((WiseData)pairs.getValue()).getData()).start();
 						System.out.println(pairs.getKey() + " = " + pairs.getValue());
 						it.remove(); // avoids a ConcurrentModificationException
+						writer.println(((WiseData)pairs.getValue()).getAgentHtml());
 					}
+					writer.println("</div>");
+					
+writer.println("<h1 id=\"players-agents\">Players agents</h1><div>");
+					
+					//start agent 1
+					writer.print("<div>");
+					writer.print("<h3><strong>Agent name: </strong>fire</h3>");
+					writer.print("<div><p><strong>Algorithm: </strong> FIRE</p>");
+					writer.print("</div><br>");
+					//end agent 1
+					
+					//start agent 2
+					writer.print("<div>");
+					writer.print("<h3><strong>Agent name: </strong>sinalpha</h3>");
+					writer.print("<div><p><strong>Algorithm: </strong> SinAlpha</p>");
+					writer.print("</div><br>");
+					//end agent 2
+					
+					//start agent 3
+					writer.print("<div>");
+					writer.print("<h3><strong>Agent name: </strong>random</h3>");
+					writer.print("<div><p><strong>Algorithm: </strong> Random</p>");
+					writer.print("</div><br>");
+					//end agent 3
+
+					writer.println("</div>");
+					
+					writer.println("<h1 id=\"questions\">Questions</h1><div><ul>");
+					writer.flush();
+					QuestionAgent.setWriter(writer);
 					
 					cc.createNewAgent("fire","agents.FIREAgent" ,null).start();
-					
+
 					cc.createNewAgent("sinalpha","agents.SinalphaAgent" ,null).start();
 					cc.createNewAgent("random","agents.BaseAnswerAgent" ,null).start();
 					Thread.sleep(100);
 					cc.createNewAgent("manela","agents.QuestionAgent" ,null).start();
+
+					
 
 				} catch (StaleProxyException e) {
 					e.printStackTrace();
@@ -194,7 +251,7 @@ public class MainWindow {
 					e.printStackTrace();
 				} 
 
-				
+
 				//Start chart
 				new Thread(new Runnable() {
 					@Override

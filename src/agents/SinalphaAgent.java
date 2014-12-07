@@ -52,7 +52,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	protected void init() {
 		
-		this.alpha0=(double)((3.1*Math.PI)/2.0);
+		this.alpha0=(double)((3.0*Math.PI)/2.0);
 		this.lambda_pos=(double)1.00;
 		this.lambda_neg=(double)-1.50;
 		this.omega=(double)(Math.PI/12.0);

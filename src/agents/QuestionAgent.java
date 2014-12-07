@@ -11,9 +11,11 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import jade.util.leap.Iterator;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Stack;
@@ -27,9 +29,17 @@ public class QuestionAgent extends Agent {
 	private static int[] agentsResults = new int[10];
 	private static Stack<Question> questions = new Stack<Question>();
 	private static ArrayList<AID> players;
+	protected static PrintWriter writer = null;
+	
+	public static void setWriter(PrintWriter w) {
+		writer = w;
+	}
 
 	protected void setup() {
+		
 		players = getPlayers();
+		
+		
 
 		/*for(int index = 0; index < agentsResults.length; index++) {
 			agentsResults[index] = 0;
@@ -145,25 +155,40 @@ public class QuestionAgent extends Agent {
 				send(msg);
 
 				//wait for multiple players
+				writer.println("<li><h3><strong>" + question.getStringQuestion() + "</strong></h3>");
+				writer.println("<ul>");
+				
 				for (int i = 0; i < players.size(); ++i) {
 					ACLMessage answer = blockingReceive(template, 10000);
 
 					writeMsg("Agent "+answer.getSender().getLocalName()+" successfully performed the requested action");
-
-					int result = Integer.parseInt(answer.getContent());
+					String[] res = answer.getContent().split(Constants.SPLIT_STRING);
+					
+					if (res.length < 2) {
+						System.err.println("Error parsing agent response!");
+						continue;
+					}
+					
+					int result = Integer.parseInt(res[0]);
 					writeMsg("Result returned by " + answer.getSender().getLocalName() + ": " + result);
 
+					String wiseAgent = res[1];
+					
 					ACLMessage reply = answer.createReply();
 					reply.setOntology(Constants.SOLUTION_ONTOLOGY);
+					
+					String color = "red";
 
 					if(result == question.getResult()) {
 						reply.setPerformative(ACLMessage.CONFIRM);
 						int agentIndex = getAgentIndex(answer.getSender().getLocalName());
 						agentsResults[agentIndex] += 1;
+						color = "green";
 					}
 					else 
 						reply.setPerformative(ACLMessage.DISCONFIRM);
-
+					
+					writer.println("<li><strong>" + answer.getSender().getLocalName() + "</strong> result by WiseAgent " + wiseAgent + ": <span style=\"color:" + color + "\">" + result + "</span></li>");
 
 					reply.setContent(Integer.toString(question.getId()));
 
@@ -177,7 +202,12 @@ public class QuestionAgent extends Agent {
 					writeMsg("Sending solution to " + answer.getSender().getLocalName());
 					send(reply);
 				}
+				//writer.println("<li>Correct result: " + question.getResult() + "</li>");
+				writer.println("</ul></li>");
+				writer.flush();
 			}
+			
+			
 			writeMsg("***********************************************************");
 			try {
 				Thread.sleep(900);

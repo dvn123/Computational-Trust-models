@@ -148,8 +148,9 @@ public class BaseAnswerAgent extends Agent {
 				// Fill the REQUEST message
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 
+				AID bestWiseAgent = getBestWiseAgent(x);
 				//Algorithm to 
-				msg.addReceiver(getBestWiseAgent(x));
+				msg.addReceiver(bestWiseAgent);
 				//writeMsg("Received best agent FIRE");
 
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
@@ -174,7 +175,7 @@ public class BaseAnswerAgent extends Agent {
 
 				int y;
 				y = Integer.parseInt(wiseAnswer.getContent());
-				agree.setContent(Integer.toString(y));
+				agree.setContent(Integer.toString(y) + Constants.SPLIT_STRING + bestWiseAgent.getLocalName());
 				//writeMsg("Received from agent " + wiseAnswer.getSender().getLocalName()+ "sabio: " + y);
 
 				agree.setPerformative(ACLMessage.INFORM);
