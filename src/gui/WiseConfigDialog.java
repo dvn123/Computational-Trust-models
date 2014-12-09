@@ -22,6 +22,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import util.WiseData;
+import java.awt.Font;
 
 public class WiseConfigDialog extends JDialog {
 
@@ -68,8 +69,8 @@ public class WiseConfigDialog extends JDialog {
 			contentPanel.add(lblName);
 		}
 
-		textName = new JTextField();
-		textName.setBounds(77, 24, 188, 20);
+		textName = new JTextField("");
+		textName.setBounds(93, 25, 188, 20);
 		contentPanel.add(textName);
 		textName.setColumns(10);
 
@@ -83,23 +84,27 @@ public class WiseConfigDialog extends JDialog {
 		panel.setLayout(null);
 
 		JLabel lblSums = new JLabel("Additions:");
+		lblSums.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblSums.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblSums.setBounds(10, 11, 77, 14);
+		lblSums.setBounds(22, 5, 77, 14);
 		panel.add(lblSums);
 
 		JLabel lblSubtaractions = new JLabel("Subtaractions:");
+		lblSubtaractions.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblSubtaractions.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblSubtaractions.setBounds(0, 36, 87, 14);
+		lblSubtaractions.setBounds(-49, 30, 148, 14);
 		panel.add(lblSubtaractions);
 
 		JLabel lblMultiplications = new JLabel("Multiplications:");
+		lblMultiplications.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblMultiplications.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblMultiplications.setBounds(0, 61, 87, 14);
+		lblMultiplications.setBounds(-13, 55, 112, 14);
 		panel.add(lblMultiplications);
 
 		JLabel lblDivisions = new JLabel("Divisions:");
+		lblDivisions.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblDivisions.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblDivisions.setBounds(0, 90, 87, 14);
+		lblDivisions.setBounds(-13, 84, 112, 14);
 		panel.add(lblDivisions);
 
 		textAddition = new JTextField();
@@ -114,7 +119,7 @@ public class WiseConfigDialog extends JDialog {
 			 * @param arg0
 			 */
 		});
-		textAddition.setBounds(97, 8, 46, 20);
+		textAddition.setBounds(105, 5, 46, 20);
 		panel.add(textAddition);
 		textAddition.setColumns(10);
 
@@ -127,7 +132,7 @@ public class WiseConfigDialog extends JDialog {
 			}
 		});
 		textSubtractions.setColumns(10);
-		textSubtractions.setBounds(97, 33, 46, 20);
+		textSubtractions.setBounds(105, 30, 46, 20);
 		panel.add(textSubtractions);
 
 		textMultiplication = new JTextField();
@@ -139,7 +144,7 @@ public class WiseConfigDialog extends JDialog {
 			}
 		});
 		textMultiplication.setColumns(10);
-		textMultiplication.setBounds(97, 58, 46, 20);
+		textMultiplication.setBounds(105, 55, 46, 20);
 		panel.add(textMultiplication);
 
 		textDivisions = new JTextField();
@@ -151,7 +156,7 @@ public class WiseConfigDialog extends JDialog {
 			}
 		});
 		textDivisions.setColumns(10);
-		textDivisions.setBounds(97, 87, 46, 20);
+		textDivisions.setBounds(105, 84, 46, 20);
 		panel.add(textDivisions);
 
 		Box horizontalBox_1 = Box.createHorizontalBox();
@@ -164,7 +169,8 @@ public class WiseConfigDialog extends JDialog {
 		panel_1.setLayout(null);
 
 		JLabel lblFactor = new JLabel("Tiredeness rate:");
-		lblFactor.setBounds(10, 11, 102, 14);
+		lblFactor.setFont(new Font("Dialog", Font.PLAIN, 12));
+		lblFactor.setBounds(10, 11, 129, 14);
 		panel_1.add(lblFactor);
 
 		textFactor = new JTextField();
@@ -181,10 +187,12 @@ public class WiseConfigDialog extends JDialog {
 		panel_1.add(textFactor);
 		
 		JLabel lblRestoreRate = new JLabel("Restore rate:");
+		lblRestoreRate.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblRestoreRate.setBounds(10, 37, 102, 15);
 		panel_1.add(lblRestoreRate);
 		
 		JLabel lblRoundsToRestore = new JLabel("Rounds to restore:");
+		lblRoundsToRestore.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblRoundsToRestore.setBounds(10, 64, 129, 15);
 		panel_1.add(lblRoundsToRestore);
 		
@@ -212,7 +220,7 @@ public class WiseConfigDialog extends JDialog {
 				textDivisions.setText(Integer.toString(r.nextInt(90)));
 			}
 		});
-		btnRandom.setBounds(192, 229, 89, 23);
+		btnRandom.setBounds(164, 229, 117, 23);
 		contentPanel.add(btnRandom);
 		{
 			JPanel buttonPane = new JPanel();
@@ -222,6 +230,11 @@ public class WiseConfigDialog extends JDialog {
 				JButton okButton = new JButton("Save");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+						if(!areAllFieldsFilled()) {
+							JOptionPane.showMessageDialog(new JFrame(), "You must fill all fields", "ERROR",
+							        JOptionPane.ERROR_MESSAGE);
+							return;
+						}
 						String name = textName.getText();
 						float addition = Float.parseFloat(textAddition.getText());
 						float subtraction = Float.parseFloat(textSubtractions.getText()); 
@@ -269,5 +282,12 @@ public class WiseConfigDialog extends JDialog {
 	
 	private boolean isPercentage(float x) {
 		return 0 <= x && x <= 100; 
+	}
+	
+	private boolean areAllFieldsFilled() {
+		return !(textAddition.getText().equals("") || textDivisions.getText().equals("")
+				|| textFactor.getText().equals("") || textMultiplication.getText().equals("")
+				|| textName.getText().equals("") || textRestore.getText().equals("")
+				|| textRounds.getText().equals("") || textSubtractions.equals(""));
 	}
 }

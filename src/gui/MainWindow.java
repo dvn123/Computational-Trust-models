@@ -36,10 +36,12 @@ import util.FIRERelation;
 import util.FIRERule;
 import util.WiseData;
 import agents.QuestionAgent;
+import java.awt.Font;
+import java.awt.Toolkit;
 
 public class MainWindow {
 
-	private JFrame frame;
+	private JFrame frmModelosDeConfianca;
 	private DefaultListModel wiseAgentsList;
 	private Map wiseAgents = new HashMap<String, WiseData>();
 	private WiseData lastWiseAdded = new WiseData();
@@ -55,7 +57,7 @@ public class MainWindow {
 			public void run() {
 				try {
 					MainWindow window = new MainWindow();
-					window.frame.setVisible(true);
+					window.frmModelosDeConfianca.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -74,15 +76,14 @@ public class MainWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmModelosDeConfianca = new JFrame();
+		frmModelosDeConfianca.setIconImage(Toolkit.getDefaultToolkit().getImage("icon.png"));
+		frmModelosDeConfianca.setTitle("Jogo modelos de confianca");
+		frmModelosDeConfianca.setBounds(100, 100, 450, 300);
+		frmModelosDeConfianca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmModelosDeConfianca.getContentPane().setLayout(null);
 
 		wiseAgentsList = new DefaultListModel();
-		/*wiseAgentsList.addElement("Jane Doe");
-		wiseAgentsList.addElement("John Smith");
-		wiseAgentsList.addElement("Kathy Green");*/
 
 		list = new JList(wiseAgentsList);
 		list.addMouseListener(new MouseAdapter() {
@@ -91,29 +92,28 @@ public class MainWindow {
 				int index = list.locationToIndex(evt.getPoint());
 			}
 		});
-		list.setBorder(UIManager.getBorder("InternalFrame.border"));
+		list.setBorder(UIManager.getBorder("FormattedTextField.border"));
 
 		list.setBounds(137, 49, 133, 149);
-		frame.getContentPane().add(list);
+		frmModelosDeConfianca.getContentPane().add(list);
 
 		JLabel lblWiseAgents = new JLabel("Wise Agents");
-		lblWiseAgents.setBounds(137, 27, 110, 14);
-		frame.getContentPane().add(lblWiseAgents);
+		lblWiseAgents.setBounds(137, 12, 110, 23);
+		frmModelosDeConfianca.getContentPane().add(lblWiseAgents);
 
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String name;
-				System.out.println(wiseAgents);
 				WiseConfigDialog dialog = new WiseConfigDialog(wiseAgents, lastWiseAdded);
 				dialog.setModal(true);
 				dialog.setVisible(true);
-				System.out.println(wiseAgents);
+		
 				wiseAgentsList.addElement(lastWiseAdded.getName());
 			}
 		});
 		btnAdd.setBounds(292, 53, 89, 23);
-		frame.getContentPane().add(btnAdd);
+		frmModelosDeConfianca.getContentPane().add(btnAdd);
 
 		JButton btnRemove = new JButton("Remove");
 		btnRemove.addActionListener(new ActionListener() {
@@ -131,7 +131,7 @@ public class MainWindow {
 			}
 		});
 		btnRemove.setBounds(292, 87, 89, 23);
-		frame.getContentPane().add(btnRemove);
+		frmModelosDeConfianca.getContentPane().add(btnRemove);
 
 		JButton btnStartSimulation = new JButton("Start simulation");
 		btnStartSimulation.addActionListener(new ActionListener() {
@@ -274,11 +274,26 @@ public class MainWindow {
 			}
 		});
 		btnStartSimulation.setBounds(266, 226, 158, 23);
-		frame.getContentPane().add(btnStartSimulation);
+		frmModelosDeConfianca.getContentPane().add(btnStartSimulation);
 
-		JLabel lblWiseData = new JLabel("Wise Agent Data:");
-		lblWiseData.setBounds(10, 67, 117, 14);
-		frame.getContentPane().add(lblWiseData);
+		JLabel lblWiseData = new JLabel("Players Agents");
+		lblWiseData.setBounds(11, 65, 117, 23);
+		frmModelosDeConfianca.getContentPane().add(lblWiseData);
+		
+		JLabel lblLaver = new JLabel(" - FIRE");
+		lblLaver.setFont(new Font("Dialog", Font.PLAIN, 12));
+		lblLaver.setBounds(30, 84, 98, 28);
+		frmModelosDeConfianca.getContentPane().add(lblLaver);
+		
+		JLabel lblSinalpha = new JLabel(" - Sinalpha");
+		lblSinalpha.setFont(new Font("Dialog", Font.PLAIN, 12));
+		lblSinalpha.setBounds(30, 109, 98, 28);
+		frmModelosDeConfianca.getContentPane().add(lblSinalpha);
+		
+		JLabel lblRandom = new JLabel(" - Random");
+		lblRandom.setFont(new Font("Dialog", Font.PLAIN, 12));
+		lblRandom.setBounds(30, 134, 98, 28);
+		frmModelosDeConfianca.getContentPane().add(lblRandom);
 
 	}
 }
