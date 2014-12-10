@@ -1,8 +1,7 @@
 package util;
 
-import java.lang.reflect.Array;
-
 public class WiseData {
+	@SuppressWarnings("unused")
 	private static final int Float = 0;
 	String name;
 	float knowledge[];

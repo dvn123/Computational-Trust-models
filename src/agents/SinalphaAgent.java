@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
+import util.Constants;
 import util.Question;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
@@ -15,9 +16,9 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private static final Integer ALPHA_POS=0;
 	private static final Integer SINALPHA_POS=1;
+	
 	private static final double ALPHA_MIN=(double)((3.0*Math.PI)/2.0);
 	private static final double ALPHA_MAX=(double)((5.0*Math.PI)/2.0);
-	
 	
 	private Map <AID, double[]> addition = new HashMap<AID, double[]>();
 	private Map <AID, double[]> subtraction = new HashMap<AID, double[]>();
@@ -52,15 +53,15 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	protected void init() {
 		
-		this.alpha0=(double)((3.0*Math.PI)/2.0);
-		this.lambda_pos=(double)1.00;
-		this.lambda_neg=(double)-1.50;
-		this.omega=(double)(Math.PI/12.0);
-		this.ro=(double)0.50;
+		this.alpha0=Constants.ALPHA0_INIT;
+		this.lambda_pos=Constants.LAMBDA_POS_INIT;
+		this.lambda_neg=Constants.LAMBDA_NEG_INIT;
+		this.omega=Constants.OMEGA_INIT;
+		this.ro=Constants.RO_INIT;
 		
 		double[] initial_values={this.alpha0, calculateSinalpha(this.alpha0)};
 
-		writeMsg("---------> alpha0: " + this.alpha0 + " sinalpha0: " + initial_values[SINALPHA_POS]);
+		//writeMsg("---------> alpha0: " + this.alpha0 + " sinalpha0: " + initial_values[SINALPHA_POS]);
 		
 		for(int i=0; i<wiseAgents.size(); i++) {
 			addition.put(wiseAgents.get(i), initial_values);
@@ -76,7 +77,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 		
 		if(message.getPerformative()==ACLMessage.CONFIRM) {
 			
-			writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_pos * this.omega));
+			//writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_pos * this.omega));
 			
 			value = previous_alpha+this.lambda_pos*this.omega;
 			
@@ -86,7 +87,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			return value;
 		}
 		else {
-			writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_neg * this.omega));
+			//writeMsg("---------> new alpha: " + (previous_alpha + this.lambda_neg * this.omega));
 			
 			value = previous_alpha+this.lambda_neg*this.omega;
 			
@@ -99,7 +100,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 	
 	private double calculateSinalpha(double alpha) {
 		
-		writeMsg("---------> new sinalpha: " + (double) (this.ro * (Math.sin(alpha) + 1)));
+		//writeMsg("---------> new sinalpha: " + (double) (this.ro * (Math.sin(alpha) + 1)));
 		return (double)(this.ro*(Math.sin(alpha)+1));
 	}
 	
@@ -207,7 +208,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 				} 
 			}
 
-			writeMsg("---------------->sinalpha: " + agents.get(key)[SINALPHA_POS]);
+			//writeMsg("---------------->sinalpha: " + agents.get(key)[SINALPHA_POS]);
 		}
 		
 		for (AID key : agents.keySet()) {
@@ -221,7 +222,7 @@ public class SinalphaAgent extends BaseAnswerAgent {
 			int agent = rand.nextInt(equalBests.size());
 			best = equalBests.get(agent);
 		}
-		writeMsg("-------------------> escolhido: " + bestValue);
+		//writeMsg("-------------------> escolhido: " + bestValue);
 		return best;
 	}
 

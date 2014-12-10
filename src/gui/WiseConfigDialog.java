@@ -22,8 +22,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import util.WiseData;
+
 import java.awt.Font;
 
+@SuppressWarnings("serial")
 public class WiseConfigDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
@@ -34,6 +36,7 @@ public class WiseConfigDialog extends JDialog {
 	private JTextField textDivisions;
 	private JTextField textFactor;
 
+	@SuppressWarnings({ "unused", "rawtypes" })
 	private Map wiseAgents;
 	private JTextField textRestore;
 	private JTextField textRounds;

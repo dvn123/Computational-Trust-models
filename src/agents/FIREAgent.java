@@ -1,29 +1,26 @@
 package agents;
 
-import FIPA.DateTime;
 import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+
 import org.joda.time.Seconds;
-import util.*;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAAgentManagement.Property;
 
-import org.joda.time.Days;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import util.Constants;
+import util.FIREDb;
+import util.FIREInteraction;
+import util.FIRERelation;
+import util.FIRERule;
+import util.Question;
 
+@SuppressWarnings("serial")
 public class FIREAgent extends BaseAnswerAgent {
-    MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST), MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+    
+	MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST), MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 
     public static final int RATING_NUMBER_THRESHOLD = 10;
 

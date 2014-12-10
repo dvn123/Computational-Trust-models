@@ -1,11 +1,9 @@
 package util;
 
-import agents.FIREAgent;
-import jade.core.AID;
-
 import java.io.Serializable;
 import java.util.Date;
 
+@SuppressWarnings("serial")
 public class FIREInteraction implements Serializable {
     public String fireAgent;
     public String replyAgent;

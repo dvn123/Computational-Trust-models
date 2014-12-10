@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Random;
 
 
+@SuppressWarnings("serial")
 public class Question implements Serializable {
 	public static final int MAX_OPERATOR_NUMBER = 4;
 	public static final int MAX_OPERAND = 100;

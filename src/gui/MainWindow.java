@@ -36,15 +36,18 @@ import util.FIRERelation;
 import util.FIRERule;
 import util.WiseData;
 import agents.QuestionAgent;
+
 import java.awt.Font;
 import java.awt.Toolkit;
 
 public class MainWindow {
 
 	private JFrame frmModelosDeConfianca;
+	@SuppressWarnings("rawtypes")
 	private DefaultListModel wiseAgentsList;
-	private Map wiseAgents = new HashMap<String, WiseData>();
+	private Map<String, WiseData> wiseAgents = new HashMap<String, WiseData>();
 	private WiseData lastWiseAdded = new WiseData();
+	@SuppressWarnings("rawtypes")
 	private JList list;
 	private PrintWriter writer = null;
 
@@ -75,6 +78,7 @@ public class MainWindow {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 	private void initialize() {
 		frmModelosDeConfianca = new JFrame();
 		frmModelosDeConfianca.setIconImage(Toolkit.getDefaultToolkit().getImage("icon.png"));

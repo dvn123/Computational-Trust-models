@@ -22,11 +22,10 @@ import java.util.Random;
 import util.Constants;
 import util.Question;
 
-
+@SuppressWarnings("serial")
 public class BaseAnswerAgent extends Agent {
+	
 	protected ArrayList<AID> wiseAgents = null;
-
-
 
 	protected void setup() {
 		String serviceName = Constants.SERVICE_NAME_PLAYER;

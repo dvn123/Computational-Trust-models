@@ -40,11 +40,12 @@ public class Constants {
 	
 	public static boolean printQuestions = false;
 	
-	
 	public static boolean printRatio = false;
 	
-	
-	
-	
+	public static final double ALPHA0_INIT=(double)((3.0*Math.PI)/2.0);
+	public static final double LAMBDA_POS_INIT=(double)1.00;
+	public static final double LAMBDA_NEG_INIT=(double)-1.50;
+	public static final double OMEGA_INIT=(double)(Math.PI/12.0);
+	public static final double RO_INIT=(double)0.50;
 
 }

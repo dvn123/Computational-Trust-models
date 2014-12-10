@@ -1,12 +1,12 @@
-import jade.core.Runtime; 
-import jade.core.Profile; 
-import jade.core.ProfileImpl; 
-import jade.wrapper.*;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.core.Runtime;
+import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
 import util.Constants;
 import util.FIRERelation;
 import util.FIRERule;
-
-import java.sql.*;
 
 
 public class Main {
@@ -22,11 +22,6 @@ public class Main {
 		Constants.relations.add(new FIRERelation("diogo", "", Constants.roleValues.get("cs_student")));
 		Constants.relations.add(new FIRERelation("diogo", "", Constants.roleValues.get("kind")));
 		Constants.relations.add(new FIRERelation("villate", "", Constants.roleValues.get("mathematician")));
-
-
-
-
-
 
 		// Get a hold on JADE runtime
     	Runtime rt = Runtime.instance(); 

@@ -11,7 +11,6 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
 import jade.util.leap.Iterator;
 
 import java.io.IOException;
@@ -24,6 +23,7 @@ import util.Constants;
 import util.Question;
 
 
+@SuppressWarnings("serial")
 public class QuestionAgent extends Agent {
 
 	private static int[] agentsResults = new int[10];
@@ -39,8 +39,6 @@ public class QuestionAgent extends Agent {
 		
 		players = getPlayers();
 		
-		
-
 		/*for(int index = 0; index < agentsResults.length; index++) {
 			agentsResults[index] = 0;
 		}*/
@@ -56,8 +54,6 @@ public class QuestionAgent extends Agent {
 		else
 			writeMsg("No players found.");
 	}
-
-
 
 	private ArrayList<AID> getPlayers() {
 		ArrayList<AID> agentsFound = new ArrayList<AID>();

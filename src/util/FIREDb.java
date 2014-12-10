@@ -1,8 +1,5 @@
 package util;
 
-import agents.FIREAgent;
-import jade.core.AID;
-
 import java.util.ArrayList;
 
 public class FIREDb {

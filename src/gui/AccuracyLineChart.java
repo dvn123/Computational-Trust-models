@@ -55,12 +55,6 @@ public class AccuracyLineChart extends Application {
 
 	private Timeline animation;
 
-
-
-	private double hours = 0;
-
-	private double minutes = 0;
-
 	private double timeInHours = 0;
 
 	private double prevY = 10;
