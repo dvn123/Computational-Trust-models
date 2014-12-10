@@ -28,9 +28,8 @@ public class Constants {
 	static public ArrayList<FIRERelation> relations = new ArrayList<FIRERelation>();
 
 	//Component Weights
-	public static final int Component1Weight = 1;
-	public static final int Component2Weight = 1;
-	public static final int Component3Weight = 1;
+	public static final float Component1Weight = (float)0.7;
+	public static final float Component2Weight = (float)0.3;
 	
 	
 	public static boolean logManela = false;
@@ -39,10 +38,10 @@ public class Constants {
 	public static boolean logWiseTiredness = false;
 	public static boolean logBaseAnswer = false;
 	
-	public static boolean printQuestions = true;
+	public static boolean printQuestions = false;
 	
 	
-	public static boolean printRatio = true;
+	public static boolean printRatio = false;
 	
 	
 	

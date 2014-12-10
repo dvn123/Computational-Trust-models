@@ -78,7 +78,7 @@ public class MainWindow {
 	private void initialize() {
 		frmModelosDeConfianca = new JFrame();
 		frmModelosDeConfianca.setIconImage(Toolkit.getDefaultToolkit().getImage("icon.png"));
-		frmModelosDeConfianca.setTitle("Jogo modelos de confianca");
+		frmModelosDeConfianca.setTitle("Trust models game");
 		frmModelosDeConfianca.setBounds(100, 100, 450, 300);
 		frmModelosDeConfianca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmModelosDeConfianca.getContentPane().setLayout(null);
@@ -104,7 +104,6 @@ public class MainWindow {
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String name;
 				WiseConfigDialog dialog = new WiseConfigDialog(wiseAgents, lastWiseAdded);
 				dialog.setModal(true);
 				dialog.setVisible(true);
@@ -120,7 +119,6 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				Object selectedValue = list.getSelectedValue();
 				if(selectedValue != null) {
-					System.out.println(selectedValue);
 					wiseAgents.remove(selectedValue);
 					wiseAgentsList.removeElement(selectedValue);
 				}
@@ -212,7 +210,6 @@ public class MainWindow {
 						Map.Entry pairs = (Map.Entry)it.next();
 
 						cc.createNewAgent((String)pairs.getKey(),"agents.WiseAgent" ,((WiseData)pairs.getValue()).getData()).start();
-						System.out.println(pairs.getKey() + " = " + pairs.getValue());
 						it.remove(); // avoids a ConcurrentModificationException
 						writer.println(((WiseData)pairs.getValue()).getAgentHtml());
 					}
@@ -271,6 +268,10 @@ public class MainWindow {
 						javafx.application.Application.launch(AccuracyLineChart.class);
 					}
 				}).start();
+				
+				btnStartSimulation.setEnabled(false);
+				btnAdd.setEnabled(false);
+				btnRemove.setEnabled(false);
 			}
 		});
 		btnStartSimulation.setBounds(266, 226, 158, 23);
