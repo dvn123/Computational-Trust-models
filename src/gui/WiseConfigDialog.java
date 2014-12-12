@@ -92,7 +92,7 @@ public class WiseConfigDialog extends JDialog {
 		lblSums.setBounds(22, 5, 77, 14);
 		panel.add(lblSums);
 
-		JLabel lblSubtaractions = new JLabel("Subtaractions:");
+		JLabel lblSubtaractions = new JLabel("Subtractions:");
 		lblSubtaractions.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblSubtaractions.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblSubtaractions.setBounds(-49, 30, 148, 14);
@@ -171,7 +171,7 @@ public class WiseConfigDialog extends JDialog {
 		horizontalBox_1.add(panel_1);
 		panel_1.setLayout(null);
 
-		JLabel lblFactor = new JLabel("Tiredeness rate:");
+		JLabel lblFactor = new JLabel("Tiredness rate:");
 		lblFactor.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblFactor.setBounds(10, 11, 129, 14);
 		panel_1.add(lblFactor);
