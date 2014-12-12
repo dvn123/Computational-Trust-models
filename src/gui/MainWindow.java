@@ -43,13 +43,19 @@ import java.awt.Toolkit;
 public class MainWindow {
 
 	private JFrame frmModelosDeConfianca;
-	@SuppressWarnings("rawtypes")
-	private DefaultListModel wiseAgentsList;
+	private DefaultListModel<String> wiseAgentsList;
 	private Map<String, WiseData> wiseAgents = new HashMap<String, WiseData>();
 	private WiseData lastWiseAdded = new WiseData();
 	@SuppressWarnings("rawtypes")
 	private JList list;
 	private PrintWriter writer = null;
+	
+	public void initWise() {
+		wiseAgents.put("f1", new WiseData("f1", 100, 100, 100, 100, 0, 0, 0));
+		wiseAgentsList.addElement("f1");
+		wiseAgents.put("f2", new WiseData("f2", 0, 0, 0, 0, 0, 0, 0));
+		wiseAgentsList.addElement("f2");
+	}
 
 
 	/**
@@ -299,6 +305,6 @@ public class MainWindow {
 		lblRandom.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblRandom.setBounds(30, 134, 98, 28);
 		frmModelosDeConfianca.getContentPane().add(lblRandom);
-
+		initWise();
 	}
 }

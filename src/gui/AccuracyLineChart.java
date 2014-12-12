@@ -8,6 +8,8 @@ package gui;
 
  */
 
+import util.Constants;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -20,7 +22,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import util.Constants;
 import agents.QuestionAgent;
 
 
@@ -103,7 +104,7 @@ public class AccuracyLineChart extends Application {
 
 	protected LineChart<Number, Number> createChart() {
 
-		xAxis = new NumberAxis(0,24,1);
+		xAxis = new NumberAxis(0,50,1);
 
 		final NumberAxis yAxis = new NumberAxis(0,100,10);
 
@@ -215,11 +216,11 @@ public class AccuracyLineChart extends Application {
 
 			// after 25hours delete old data
 
-			if (timeInHours > 25) sinalphaDataSeries.getData().remove(0);
+			if (timeInHours > 51) sinalphaDataSeries.getData().remove(0);
 
 			// every hour after 24 move range 1 hour
 
-			if (timeInHours > 24) {
+			if (timeInHours > 50) {
 
 				xAxis.setLowerBound(xAxis.getLowerBound()+1);
 
@@ -229,6 +230,35 @@ public class AccuracyLineChart extends Application {
 
 		}
 
+		/*   double min = (timeInHours % 1);
+
+        double randomPickVariance = Math.random();
+
+        if (randomPickVariance < 0.3) {
+
+            double minY = prevY + ((y-prevY) * min) - 4 + (Math.random()*8);
+
+            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
+
+        } else if (randomPickVariance < 0.7) {
+
+            double minY = prevY + ((y-prevY) * min) - 6 + (Math.random()*12);
+
+            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
+
+        } else if (randomPickVariance < 0.95) {
+
+            double minY = prevY + ((y-prevY) * min) - 10 + (Math.random()*20);
+
+            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
+
+        } else {
+
+            double minY = prevY + ((y-prevY) * min) - 15 + (Math.random()*30);
+
+            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
+
+        }*/
 
 		// after 25hours delete old data
 
@@ -240,8 +270,8 @@ public class AccuracyLineChart extends Application {
 		sinalphaDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,y));
 		randomDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,z));
 
-		if (timeInHours > 25) fireDataSeries.getData().remove(0);
-		if (timeInHours > 25) randomDataSeries.getData().remove(0);
+		if (timeInHours > 51) fireDataSeries.getData().remove(0);
+		if (timeInHours > 51) randomDataSeries.getData().remove(0);
 
 	}
 
