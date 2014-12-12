@@ -126,13 +126,13 @@ public class AccuracyLineChart extends Application {
 
 
 
-		xAxis.setLabel("Time");
+		xAxis.setLabel("Time (s)");
 
 		xAxis.setForceZeroInRange(false);
 
-		yAxis.setLabel("Accuracy");
+		yAxis.setLabel("Accuracy (%)");
 
-		yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis,"%",null));
+		yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis,"",null));
 
 		// add starting data
 
