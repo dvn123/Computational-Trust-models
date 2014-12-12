@@ -49,12 +49,76 @@ public class MainWindow {
 	@SuppressWarnings("rawtypes")
 	private JList list;
 	private PrintWriter writer = null;
-	
+
 	public void initWise() {
-		wiseAgents.put("f1", new WiseData("f1", 100, 100, 100, 100, 0, 0, 0));
-		wiseAgentsList.addElement("f1");
-		wiseAgents.put("f2", new WiseData("f2", 0, 0, 0, 0, 0, 0, 0));
-		wiseAgentsList.addElement("f2");
+		int test = 3;
+		switch (test) {
+		case 1:
+			wiseAgents.put("f1", new WiseData("f1", 100, 100, 100, 100, 0, 0, 0));
+			wiseAgentsList.addElement("f1");
+			wiseAgents.put("f2", new WiseData("f2", 0, 0, 0, 0, 0, 0, 0));
+			wiseAgentsList.addElement("f2");
+			break;
+		case 2:
+			wiseAgents.put("f1", new WiseData("f1", 100, 0, 0, 0, 0, 0, 0));
+			wiseAgentsList.addElement("f1");
+			wiseAgents.put("f2", new WiseData("f2", 0, 100, 0, 0, 0, 0, 0));
+			wiseAgentsList.addElement("f2");
+			wiseAgents.put("f3", new WiseData("f3", 0, 0, 100, 0, 0, 0, 0));
+			wiseAgentsList.addElement("f3");
+			wiseAgents.put("f4", new WiseData("f4", 0, 0, 0, 100, 0, 0, 0));
+			wiseAgentsList.addElement("f4");
+			break;
+		case 3:
+			wiseAgents.put("f1", new WiseData("f1", 100, 0, 0, 0, 0, 0, 0));
+			wiseAgentsList.addElement("f1");
+			wiseAgents.put("f2", new WiseData("f2", 0, 100, 0, 0, 0, 0, 0));
+			wiseAgentsList.addElement("f2");
+			wiseAgents.put("f3", new WiseData("f3", 0, 0, 100, 0, 0, 0, 0));
+			wiseAgentsList.addElement("f3");
+			wiseAgents.put("f4", new WiseData("f4", 0, 0, 0, 100, 0, 0, 0));
+			wiseAgentsList.addElement("f4");
+			wiseAgents.put("f5", new WiseData("f5", 65, 65, 65, 65, 0, 0, 0));
+			wiseAgentsList.addElement("f5");
+			break;
+		case 4:
+			wiseAgents.put("f1", new WiseData("f1", 90, 90, 40, 10, 0, 0, 0));
+			wiseAgentsList.addElement("f1");
+			wiseAgents.put("f2", new WiseData("f2", 70, 70, 70, 40, 0, 0, 0));
+			wiseAgentsList.addElement("f2");
+			wiseAgents.put("f3", new WiseData("f3", 40, 10, 90, 70, 0, 0, 0));
+			wiseAgentsList.addElement("f3");
+			wiseAgents.put("f4", new WiseData("f4", 10, 40, 10, 90, 0, 0, 0));
+			wiseAgentsList.addElement("f4");
+			break;
+		case 5:
+			wiseAgents.put("f1", new WiseData("f1", 80, 80, 30, 5, 0, 0, 0));
+			wiseAgents.put("f2", new WiseData("f2", 60, 60, 60, 30, 0, 0, 0));
+			wiseAgents.put("f3", new WiseData("f3", 30, 5, 80, 60, 0, 0, 0));
+			wiseAgents.put("f4", new WiseData("f4", 5, 30, 10, 80, 0, 0, 0));
+			wiseAgents.put("f5", new WiseData("f5", 70, 50, 20, 5, 0, 0, 0));
+			wiseAgents.put("f6", new WiseData("f6", 40, 20, 70, 15, 0, 0, 0));
+			wiseAgents.put("f7", new WiseData("f7", 10, 35, 5, 75, 0, 0, 0));
+			wiseAgents.put("f8", new WiseData("f8", 0, 20, 50, 50, 0, 0, 0));
+			wiseAgents.put("f9", new WiseData("f9", 20, 5, 90, 10, 0, 0, 0));
+			wiseAgents.put("f10", new WiseData("f10", 90, 85, 20, 30, 0, 0, 0));
+			wiseAgentsList.addElement("f1");
+			wiseAgentsList.addElement("f2");
+			wiseAgentsList.addElement("f3");
+			wiseAgentsList.addElement("f4");
+			wiseAgentsList.addElement("f5");
+			wiseAgentsList.addElement("f6");
+			wiseAgentsList.addElement("f7");
+			wiseAgentsList.addElement("f8");
+			wiseAgentsList.addElement("f9");
+			wiseAgentsList.addElement("f10");
+			break;
+		case 6:
+			wiseAgents.put("f1", new WiseData("f1", 100, 100, 100, 100, 5, 5, 5));
+			wiseAgentsList.addElement("f1");
+			break;
+		}
+
 	}
 
 
@@ -117,7 +181,7 @@ public class MainWindow {
 				WiseConfigDialog dialog = new WiseConfigDialog(wiseAgents, lastWiseAdded);
 				dialog.setModal(true);
 				dialog.setVisible(true);
-		
+
 				wiseAgentsList.addElement(lastWiseAdded.getName());
 			}
 		});
@@ -278,7 +342,7 @@ public class MainWindow {
 						javafx.application.Application.launch(AccuracyLineChart.class);
 					}
 				}).start();
-				
+
 				btnStartSimulation.setEnabled(false);
 				btnAdd.setEnabled(false);
 				btnRemove.setEnabled(false);
@@ -290,17 +354,17 @@ public class MainWindow {
 		JLabel lblWiseData = new JLabel("Players Agents");
 		lblWiseData.setBounds(11, 65, 117, 23);
 		frmModelosDeConfianca.getContentPane().add(lblWiseData);
-		
+
 		JLabel lblLaver = new JLabel(" - FIRE");
 		lblLaver.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblLaver.setBounds(30, 84, 98, 28);
 		frmModelosDeConfianca.getContentPane().add(lblLaver);
-		
+
 		JLabel lblSinalpha = new JLabel(" - Sinalpha");
 		lblSinalpha.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblSinalpha.setBounds(30, 109, 98, 28);
 		frmModelosDeConfianca.getContentPane().add(lblSinalpha);
-		
+
 		JLabel lblRandom = new JLabel(" - Random");
 		lblRandom.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblRandom.setBounds(30, 134, 98, 28);
