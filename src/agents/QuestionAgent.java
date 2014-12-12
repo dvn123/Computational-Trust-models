@@ -30,6 +30,7 @@ public class QuestionAgent extends Agent {
 	private static Stack<Question> questions = new Stack<Question>();
 	private static ArrayList<AID> players;
 	protected static PrintWriter writer = null;
+	protected static boolean printedResults = false;
 	
 	public static void setWriter(PrintWriter w) {
 		writer = w;
@@ -136,8 +137,34 @@ public class QuestionAgent extends Agent {
 				// We want to receive a reply in 10 secs
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
 				//msg.setContent("dummy-action");
+				
+				Question q1 = Question.generateQuestion();
+				
+				if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS && !printedResults) {
+					writer.println("<h1 id=\"results\">Results</h1>");
+					writer.println("<ul>");
+					for(int i = 0; i < players.size(); i++) {
+						writer.println("<li>");
+						writer.print("<strong>" + players.get(i).getLocalName() + ":</strong> ");
+						float v = (float)agentsResults[i] / questions.size();
+						writer.print("  score: " + agentsResults[i] + "/" + questions.size()  + "  ratio: " + v);
+						writer.println("</li>");
+					}
+					writer.println("</ul>");
+					printedResults = true;
+					writer.flush();
+					return;
+				} else if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS) {
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					return;
+				}
 
-				questions.push(Question.generateQuestion());
+
+				questions.push(q1);
 
 				Question question = questions.peek();
 
@@ -206,7 +233,7 @@ public class QuestionAgent extends Agent {
 			
 			writeMsg("***********************************************************");
 			try {
-				Thread.sleep(900);
+				Thread.sleep(Constants.TIME_BETWEEN_QUESTIONS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

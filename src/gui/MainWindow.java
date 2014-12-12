@@ -185,7 +185,7 @@ public class MainWindow {
 
 
 				writer.println("<html><head></head><body><h2>" + sdf2.format(date) +"</h2><br> ");
-				writer.println("<span><a href=\"#wise-agents\">Wise Agents</a> | <a href=\"#players-agents\">Players Agents</a> | <a href=\"#questions\">Questions</a></span>");
+				writer.println("<span><a href=\"#wise-agents\">Wise Agents</a> | <a href=\"#players-agents\">Players Agents</a> | <a href=\"#questions\">Questions</a> | <a href=\"#results\">Results</a></span>");
 				writer.println("<h1 id=\"wise-agents\">Wise agents</h1><div>");
 
 				Runtime rt = Runtime.instance(); 

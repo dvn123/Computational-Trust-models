@@ -8,7 +8,6 @@ package gui;
 
  */
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -21,6 +20,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import util.Constants;
 import agents.QuestionAgent;
 
 
@@ -48,7 +48,7 @@ public class AccuracyLineChart extends Application {
 	private XYChart.Series<Number,Number> sinalphaDataSeries;
 
 	private XYChart.Series<Number,Number> fireDataSeries;
-	
+
 	private XYChart.Series<Number,Number> randomDataSeries;
 
 	private NumberAxis xAxis;
@@ -93,9 +93,9 @@ public class AccuracyLineChart extends Application {
 			}
 
 		}));
-		
 
-		animation.setCycleCount(Animation.INDEFINITE);
+
+		animation.setCycleCount(Constants.NUMBER_OF_QUESTIONS - 1);
 
 	}
 
@@ -120,10 +120,10 @@ public class AccuracyLineChart extends Application {
 		lc.setLegendVisible(false);
 
 		lc.setTitle("Agents accuracy over time");
-		
+
 		//my properties
-		
-		
+
+
 
 		xAxis.setLabel("Time");
 
@@ -142,7 +142,7 @@ public class AccuracyLineChart extends Application {
 		fireDataSeries = new XYChart.Series<Number,Number>();
 
 		fireDataSeries.setName("FIRE");
-		
+
 		randomDataSeries = new XYChart.Series<Number,Number>();
 		randomDataSeries.setName("Random");
 
@@ -151,7 +151,7 @@ public class AccuracyLineChart extends Application {
 		sinalphaDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,0));
 
 		fireDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,0));
-		
+
 		randomDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,0));
 
 		// for (double m=0; m<(60); m++) {
@@ -166,7 +166,7 @@ public class AccuracyLineChart extends Application {
 
 		lc.getData().add(sinalphaDataSeries);
 		lc.getData().add(randomDataSeries);
-		
+
 		lc.setLegendVisible(true);
 
 		return lc;
@@ -190,7 +190,8 @@ public class AccuracyLineChart extends Application {
         }
 
         timeInHours = hours + ((1d/60d)*minutes);*/
-		timeInHours++;
+		if (timeInHours < Constants.NUMBER_OF_QUESTIONS)
+			timeInHours++;
 
 	}
 
@@ -228,42 +229,13 @@ public class AccuracyLineChart extends Application {
 
 		}
 
-		/*   double min = (timeInHours % 1);
-
-        double randomPickVariance = Math.random();
-
-        if (randomPickVariance < 0.3) {
-
-            double minY = prevY + ((y-prevY) * min) - 4 + (Math.random()*8);
-
-            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
-
-        } else if (randomPickVariance < 0.7) {
-
-            double minY = prevY + ((y-prevY) * min) - 6 + (Math.random()*12);
-
-            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
-
-        } else if (randomPickVariance < 0.95) {
-
-            double minY = prevY + ((y-prevY) * min) - 10 + (Math.random()*20);
-
-            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
-
-        } else {
-
-            double minY = prevY + ((y-prevY) * min) - 15 + (Math.random()*30);
-
-            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
-
-        }*/
 
 		// after 25hours delete old data
 
 		double x =  QuestionAgent.getAgentRatio("fire");
 		double y =  QuestionAgent.getAgentRatio("sinalpha");
 		double z =  QuestionAgent.getAgentRatio("random");
-		
+
 		fireDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,x));
 		sinalphaDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,y));
 		randomDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,z));
