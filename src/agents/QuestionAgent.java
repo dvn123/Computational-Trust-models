@@ -141,7 +141,7 @@ public class QuestionAgent extends Agent {
 				Question q1 = Question.generateQuestion();
 				
 				if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS && !printedResults) {
-					writer.println("<h1 id=\"results\">Results</h1>");
+					writer.println("</ul><h1 id=\"results\">Results</h1>");
 					writer.println("<ul>");
 					for(int i = 0; i < players.size(); i++) {
 						writer.println("<li>");
