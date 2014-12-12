@@ -111,7 +111,7 @@ public class MainWindow {
 		lblWiseAgents.setBounds(137, 12, 110, 23);
 		frmModelosDeConfianca.getContentPane().add(lblWiseAgents);
 
-		JButton btnAdd = new JButton("Add");
+		final JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				WiseConfigDialog dialog = new WiseConfigDialog(wiseAgents, lastWiseAdded);
@@ -124,7 +124,7 @@ public class MainWindow {
 		btnAdd.setBounds(292, 53, 89, 23);
 		frmModelosDeConfianca.getContentPane().add(btnAdd);
 
-		JButton btnRemove = new JButton("Remove");
+		final JButton btnRemove = new JButton("Remove");
 		btnRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Object selectedValue = list.getSelectedValue();
@@ -141,7 +141,7 @@ public class MainWindow {
 		btnRemove.setBounds(292, 87, 89, 23);
 		frmModelosDeConfianca.getContentPane().add(btnRemove);
 
-		JButton btnStartSimulation = new JButton("Start simulation");
+		final JButton btnStartSimulation = new JButton("Start simulation");
 		btnStartSimulation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Constants.roleValues.put("mathematician", new FIRERule("cs_student", (float) 1, (float) 1));

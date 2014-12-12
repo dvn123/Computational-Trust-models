@@ -8,8 +8,11 @@ import jade.lang.acl.UnreadableException;
 
 import org.joda.time.Seconds;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
+
 import util.Constants;
 import util.FIREDb;
 import util.FIREInteraction;
@@ -156,7 +159,7 @@ public class FIREAgent extends BaseAnswerAgent {
     }
 
     protected AID getBestWiseAgent(Question question) {
-        AID best = null;
+        ArrayList<AID> best = new ArrayList<AID>();
         float maxScore = -999;
         float scoreTemp = -1;
         for (AID w: wiseAgents) {
@@ -164,17 +167,23 @@ public class FIREAgent extends BaseAnswerAgent {
             //writeMsg("Length db - " + String.valueOf(FIREDb.find(w.getLocalName(), String.valueOf(question.getOperator()), this.getLocalName()).size()));
             writeMsg("ScoreTemp - " + String.valueOf(scoreTemp) + " - Agent name = " + w.getLocalName() + "\n");
             if (scoreTemp > maxScore) {
-                best =  w;
+                best.clear();
+                best.add(w);
                 maxScore = scoreTemp;
+            } else if(scoreTemp == maxScore) {
+                best.add(w);
             }
         }
         if(best == null)
            System.exit(-1);
 
+        Random x = new Random();
+        int index = x.nextInt(best.size());
+        AID bestFinal =  best.get(index);
 
-        writeMsg("Returned best agent - " + best.getLocalName());
-        FIREDb.addInteraction(new FIREInteraction(this.getLocalName(), best.getLocalName(), question.getId(), String.valueOf(question.getOperator()), (float) 0));
-        return best;
+        writeMsg("Returned best agent - " + bestFinal.getLocalName());
+        FIREDb.addInteraction(new FIREInteraction(this.getLocalName(), bestFinal.getLocalName(), question.getId(), String.valueOf(question.getOperator()), (float) 0));
+        return bestFinal;
     }
 
     protected void handleSolution(ACLMessage ok) {
