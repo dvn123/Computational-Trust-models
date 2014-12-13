@@ -11,6 +11,7 @@ package gui;
 import java.io.File;
 import java.io.IOException;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -89,7 +90,7 @@ public class AccuracyLineChart extends Application {
 				nextTime();
 				plotTime();
 				
-				if(timeInHours % Constants.TIME_BETWEEN_PICTURES == 0 || timeInHours == Constants.NUMBER_OF_QUESTIONS) {
+				if(timeInHours % Constants.TIME_BETWEEN_PICTURES == 0 || timeInHours % Constants.GRAPH_MAX_X == 0) {
 					WritableImage snapShot = scene.snapshot(null);
 
 					try {
@@ -104,7 +105,7 @@ public class AccuracyLineChart extends Application {
 		}));
 
 
-		animation.setCycleCount(Constants.NUMBER_OF_QUESTIONS - 1);
+		animation.setCycleCount(Animation.INDEFINITE);
 
 	}
 
@@ -177,7 +178,7 @@ public class AccuracyLineChart extends Application {
 
 		lc.setLegendVisible(true);
 		
-		lc.setPrefSize(1200, 600);
+		//lc.setPrefSize(1200, 600);
 
 		return lc;
 
@@ -186,10 +187,7 @@ public class AccuracyLineChart extends Application {
 
 
 	private void nextTime() {
-
-		if (timeInHours < Constants.NUMBER_OF_QUESTIONS)
 			timeInHours++;
-
 	}
 
 

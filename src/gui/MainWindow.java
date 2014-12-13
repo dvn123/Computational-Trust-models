@@ -8,10 +8,14 @@ import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -37,9 +41,6 @@ import util.FIRERule;
 import util.WiseData;
 import agents.QuestionAgent;
 
-import java.awt.Font;
-import java.awt.Toolkit;
-
 public class MainWindow {
 	public static String folder;
 	private JFrame frmModelosDeConfianca;
@@ -51,7 +52,7 @@ public class MainWindow {
 	private PrintWriter writer = null;
 
 	public void initWise() {
-		int test = 1;
+		int test = 4;
 		switch (test) {
 		case 1:
 			wiseAgents.put("f1", new WiseData("f1", 100, 100, 100, 100, 0, 0, 0));
@@ -138,6 +139,8 @@ public class MainWindow {
 				}
 			}
 		});
+		
+		
 	}
 
 	/**
@@ -158,6 +161,12 @@ public class MainWindow {
 		frmModelosDeConfianca.setBounds(100, 100, 450, 300);
 		frmModelosDeConfianca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmModelosDeConfianca.getContentPane().setLayout(null);
+		
+		frmModelosDeConfianca.addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+		        QuestionAgent.writeResults();
+		    }
+		});
 
 		wiseAgentsList = new DefaultListModel();
 
@@ -387,6 +396,8 @@ public class MainWindow {
 		lblRandom.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblRandom.setBounds(30, 134, 98, 28);
 		frmModelosDeConfianca.getContentPane().add(lblRandom);
-		initWise();
+		//initWise();
 	}
+	
+	
 }

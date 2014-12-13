@@ -31,7 +31,6 @@ public class QuestionAgent extends Agent {
 	private static Stack<Question> questions = new Stack<Question>();
 	private static ArrayList<AID> players;
 	protected static PrintWriter writer = null;
-	protected static boolean printedResults = false;
 
 	public static void setWriter(PrintWriter w) {
 		writer = w;
@@ -107,6 +106,8 @@ public class QuestionAgent extends Agent {
 			System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 
+	
+
 	private class QuestioningBehaviour extends CyclicBehaviour {
 		ArrayList<AID> players;
 		private int nResponders;
@@ -139,33 +140,7 @@ public class QuestionAgent extends Agent {
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
 				//msg.setContent("dummy-action");
 
-				Question q1 = Question.generateQuestion();
-
-				if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS && !printedResults) {
-					writer.println("</ul><h1 id=\"results\">Results</h1>");
-					writer.println("<ul>");
-					for(int i = 0; i < players.size(); i++) {
-						writer.println("<li>");
-						writer.print("<strong>" + players.get(i).getLocalName() + ":</strong> ");
-						float v = (float)agentsResults[i] / agentsNrQuestions[i];
-						writer.print("  score: " + agentsResults[i] + "/" + agentsNrQuestions[i]  + "  ratio: " + v);
-						writer.println("</li>");
-					}
-					writer.println("</ul>");
-					printedResults = true;
-					writer.flush();
-					return;
-				} else if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS) {
-					try {
-						Thread.sleep(10000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-
-
-				questions.push(q1);
+				questions.push(Question.generateQuestion());
 
 				Question question = questions.peek();
 
@@ -276,6 +251,20 @@ public class QuestionAgent extends Agent {
 			return -1;
 
 		return i;
+	}
+	
+	static public void writeResults() {
+		writer.println("</ul><h1 id=\"results\">Results</h1>");
+		writer.println("<ul>");
+		for(int i = 0; i < players.size(); i++) {
+			writer.println("<li>");
+			writer.print("<strong>" + players.get(i).getLocalName() + ":</strong> ");
+			float v = (float)agentsResults[i] / agentsNrQuestions[i];
+			writer.print("  score: " + agentsResults[i] + "/" + agentsNrQuestions[i]  + "  ratio: " + v);
+			writer.println("</li>");
+		}
+		writer.println("</ul>");
+		writer.flush();
 	}
 }
 
