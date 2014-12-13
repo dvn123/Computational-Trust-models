@@ -112,7 +112,7 @@ public class AccuracyLineChart extends Application {
 
 	protected LineChart<Number, Number> createChart() {
 
-		xAxis = new NumberAxis(0,50,1);
+		xAxis = new NumberAxis(0,Constants.GRAPH_MAX_X,1);
 
 		final NumberAxis yAxis = new NumberAxis(0,100,10);
 
@@ -176,6 +176,8 @@ public class AccuracyLineChart extends Application {
 		lc.getData().add(randomDataSeries);
 
 		lc.setLegendVisible(true);
+		
+		lc.setPrefSize(1200, 600);
 
 		return lc;
 

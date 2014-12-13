@@ -52,8 +52,8 @@ public class Constants {
 	public static final int NUMBER_OF_QUESTIONS = 500;
 	public static final int TIME_BETWEEN_QUESTIONS = 1001;
 	
-	public static final int TIME_BETWEEN_PICTURES = 5;
-	public static final int GRAPH_MAX_X = 50;
+	public static final int TIME_BETWEEN_PICTURES = 20;
+	public static final int GRAPH_MAX_X = 100;
 
 
 
