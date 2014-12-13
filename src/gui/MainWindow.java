@@ -41,7 +41,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 
 public class MainWindow {
-
+	public static String folder;
 	private JFrame frmModelosDeConfianca;
 	private DefaultListModel<String> wiseAgentsList;
 	private Map<String, WiseData> wiseAgents = new HashMap<String, WiseData>();
@@ -70,6 +70,7 @@ public class MainWindow {
 			wiseAgentsList.addElement("f4");
 			break;
 		case 3:
+			
 			wiseAgents.put("f1", new WiseData("f1", 100, 0, 0, 0, 0, 0, 0));
 			wiseAgentsList.addElement("f1");
 			wiseAgents.put("f2", new WiseData("f2", 0, 100, 0, 0, 0, 0, 0));
@@ -78,8 +79,9 @@ public class MainWindow {
 			wiseAgentsList.addElement("f3");
 			wiseAgents.put("f4", new WiseData("f4", 0, 0, 0, 100, 0, 0, 0));
 			wiseAgentsList.addElement("f4");
-			wiseAgents.put("f5", new WiseData("f5", 65, 65, 65, 65, 0, 0, 0));
+			wiseAgents.put("f5", new WiseData("f5", 80, 80, 80, 80, 0, 0, 0));
 			wiseAgentsList.addElement("f5");
+			
 			break;
 		case 4:
 			wiseAgents.put("f1", new WiseData("f1", 90, 90, 40, 10, 0, 0, 0));
@@ -238,18 +240,34 @@ public class MainWindow {
 						return;
 					}        
 				}
+				
+				
+				
+				
 				//initializing log
 				Calendar cal = Calendar.getInstance();
 				Date date = cal.getTime();
 				SimpleDateFormat sdf = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
 				SimpleDateFormat sdf2 = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+				
+				folder = "log/" + sdf.format(date);
+				File theDir2 = new File(folder);
+
+				// if the directory does not exist, create it
+				if (!theDir2.exists()) {
+					try{
+						theDir2.mkdir();
+					} catch(SecurityException se){
+						se.printStackTrace();
+						return;
+					}        
+				}
+				
 				try {
-					writer = new PrintWriter("log/log_" + sdf.format(date) + ".html", "UTF-8");
+					writer = new PrintWriter(folder + "/log.html", "UTF-8");
 				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (UnsupportedEncodingException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 

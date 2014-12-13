@@ -8,20 +8,26 @@ package gui;
 
  */
 
-import util.Constants;
-import javafx.animation.Animation;
+import java.io.File;
+import java.io.IOException;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import javax.imageio.ImageIO;
+
+import util.Constants;
 import agents.QuestionAgent;
 
 
@@ -66,11 +72,11 @@ public class AccuracyLineChart extends Application {
 
 	private void init(Stage primaryStage) {
 
-		Group root = new Group();
 
-		primaryStage.setScene(new Scene(root));
+		Scene scene = new Scene(createChart());
+		primaryStage.setScene(scene);
 
-		root.getChildren().add(createChart());
+		
 
 		// create timeline to add new data every 60th of second
 
@@ -80,16 +86,18 @@ public class AccuracyLineChart extends Application {
 
 			@Override public void handle(ActionEvent actionEvent) {
 
-				// 6 minutes data per frame
+				if(timeInHours % Constants.TIME_BETWEEN_PICTURES == 0) {
+					WritableImage snapShot = scene.snapshot(null);
 
-				for(int count=0; count < 1; count++) {
-
-					nextTime();
-
-
-					plotTime();
-
+					try {
+						ImageIO.write(SwingFXUtils.fromFXImage(snapShot, null), "png", new File(MainWindow.folder + "/picture_" + timeInHours + ".png"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
+				
+				nextTime();
+				plotTime();
 
 			}
 
@@ -155,14 +163,13 @@ public class AccuracyLineChart extends Application {
 
 		randomDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,0));
 
-		// for (double m=0; m<(60); m++) {
+
 
 		nextTime();
 
 		plotTime();
 
-		// }
-
+		
 		lc.getData().add(fireDataSeries);
 
 		lc.getData().add(sinalphaDataSeries);
@@ -178,19 +185,6 @@ public class AccuracyLineChart extends Application {
 
 	private void nextTime() {
 
-		/* if (minutes == 59) {
-
-            hours ++;
-
-            minutes = 0;
-
-        } else {
-
-            minutes ++;
-
-        }
-
-        timeInHours = hours + ((1d/60d)*minutes);*/
 		if (timeInHours < Constants.NUMBER_OF_QUESTIONS)
 			timeInHours++;
 
@@ -212,15 +206,14 @@ public class AccuracyLineChart extends Application {
 
 			while (y < 10 || y > 90) y = y - 10 + (Math.random()*20);
 
-			//hourDataSeries.getData().add(new XYChart.Data<Number, Number>(timeInHours, prevY));
 
-			// after 25hours delete old data
+			// after x hours delete old data
 
-			if (timeInHours > 51) sinalphaDataSeries.getData().remove(0);
+			if (timeInHours > Constants.GRAPH_MAX_X + 1) sinalphaDataSeries.getData().remove(0);
 
-			// every hour after 24 move range 1 hour
+			// every hour after x move range 1 hour
 
-			if (timeInHours > 50) {
+			if (timeInHours > Constants.GRAPH_MAX_X) {
 
 				xAxis.setLowerBound(xAxis.getLowerBound()+1);
 
@@ -230,37 +223,8 @@ public class AccuracyLineChart extends Application {
 
 		}
 
-		/*   double min = (timeInHours % 1);
 
-        double randomPickVariance = Math.random();
-
-        if (randomPickVariance < 0.3) {
-
-            double minY = prevY + ((y-prevY) * min) - 4 + (Math.random()*8);
-
-            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
-
-        } else if (randomPickVariance < 0.7) {
-
-            double minY = prevY + ((y-prevY) * min) - 6 + (Math.random()*12);
-
-            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
-
-        } else if (randomPickVariance < 0.95) {
-
-            double minY = prevY + ((y-prevY) * min) - 10 + (Math.random()*20);
-
-            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
-
-        } else {
-
-            double minY = prevY + ((y-prevY) * min) - 15 + (Math.random()*30);
-
-            minuteDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,minY));
-
-        }*/
-
-		// after 25hours delete old data
+		// after x time delete old data
 
 		double x =  QuestionAgent.getAgentRatio("fire");
 		double y =  QuestionAgent.getAgentRatio("sinalpha");
@@ -270,8 +234,8 @@ public class AccuracyLineChart extends Application {
 		sinalphaDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,y));
 		randomDataSeries.getData().add(new XYChart.Data<Number,Number>(timeInHours,z));
 
-		if (timeInHours > 51) fireDataSeries.getData().remove(0);
-		if (timeInHours > 51) randomDataSeries.getData().remove(0);
+		if (timeInHours > Constants.GRAPH_MAX_X + 1) fireDataSeries.getData().remove(0);
+		if (timeInHours > Constants.GRAPH_MAX_X + 1) randomDataSeries.getData().remove(0);
 
 	}
 
@@ -307,7 +271,5 @@ public class AccuracyLineChart extends Application {
 		play();
 
 	}
-
-	/*public static void main(String[] args) { launch(args); }*/
 
 }
