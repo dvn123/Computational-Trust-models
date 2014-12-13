@@ -6,12 +6,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
-import org.joda.time.Seconds;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+
+import org.joda.time.Seconds;
 
 import util.Constants;
 import util.FIREDb;
@@ -174,9 +173,6 @@ public class FIREAgent extends BaseAnswerAgent {
                 best.add(w);
             }
         }
-        if(best == null)
-           System.exit(-1);
-
         Random x = new Random();
         int index = x.nextInt(best.size());
         AID bestFinal =  best.get(index);
