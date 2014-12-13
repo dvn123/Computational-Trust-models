@@ -62,7 +62,7 @@ public class AccuracyLineChart extends Application {
 
 	private Timeline animation;
 
-	private double timeInHours = 0;
+	private int timeInHours = 0;
 
 	private double prevY = 10;
 
@@ -85,8 +85,12 @@ public class AccuracyLineChart extends Application {
 		animation.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new EventHandler<ActionEvent>() {
 
 			@Override public void handle(ActionEvent actionEvent) {
-
-				if(timeInHours % Constants.TIME_BETWEEN_PICTURES == 0) {
+				System.out.println(timeInHours);
+				
+				nextTime();
+				plotTime();
+				
+				if(timeInHours % Constants.TIME_BETWEEN_PICTURES == 0 || timeInHours == Constants.NUMBER_OF_QUESTIONS) {
 					WritableImage snapShot = scene.snapshot(null);
 
 					try {
@@ -96,9 +100,6 @@ public class AccuracyLineChart extends Application {
 					}
 				}
 				
-				nextTime();
-				plotTime();
-
 			}
 
 		}));

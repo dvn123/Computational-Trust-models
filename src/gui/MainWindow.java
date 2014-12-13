@@ -51,7 +51,7 @@ public class MainWindow {
 	private PrintWriter writer = null;
 
 	public void initWise() {
-		int test = 3;
+		int test = 1;
 		switch (test) {
 		case 1:
 			wiseAgents.put("f1", new WiseData("f1", 100, 100, 100, 100, 0, 0, 0));
