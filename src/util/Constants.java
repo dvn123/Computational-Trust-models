@@ -49,7 +49,7 @@ public class Constants {
 	public static final double RO_INIT=(double)0.50;
 
 
-	public static final int NUMBER_OF_QUESTIONS = 100;
+	public static final int NUMBER_OF_QUESTIONS = 300;
 	public static final int TIME_BETWEEN_QUESTIONS = 1001;
 	
 	public static final int TIME_BETWEEN_PICTURES = 50;

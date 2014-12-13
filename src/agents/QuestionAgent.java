@@ -107,6 +107,20 @@ public class QuestionAgent extends Agent {
 			System.out.println("Agent "+ getLocalName() + ": " + msg);
 	}
 
+	public void writeResults() {
+		writer.println("</ul><h1 id=\"results\">Results</h1>");
+		writer.println("<ul>");
+		for(int i = 0; i < players.size(); i++) {
+			writer.println("<li>");
+			writer.print("<strong>" + players.get(i).getLocalName() + ":</strong> ");
+			float v = (float)agentsResults[i] / agentsNrQuestions[i];
+			writer.print("  score: " + agentsResults[i] + "/" + agentsNrQuestions[i]  + "  ratio: " + v);
+			writer.println("</li>");
+		}
+		writer.println("</ul>");
+		writer.flush();
+	}
+
 	private class QuestioningBehaviour extends CyclicBehaviour {
 		ArrayList<AID> players;
 		private int nResponders;
@@ -142,20 +156,13 @@ public class QuestionAgent extends Agent {
 				Question q1 = Question.generateQuestion();
 
 				if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS && !printedResults) {
-					writer.println("</ul><h1 id=\"results\">Results</h1>");
-					writer.println("<ul>");
-					for(int i = 0; i < players.size(); i++) {
-						writer.println("<li>");
-						writer.print("<strong>" + players.get(i).getLocalName() + ":</strong> ");
-						float v = (float)agentsResults[i] / agentsNrQuestions[i];
-						writer.print("  score: " + agentsResults[i] + "/" + agentsNrQuestions[i]  + "  ratio: " + v);
-						writer.println("</li>");
-					}
-					writer.println("</ul>");
+					writeResults();
 					printedResults = true;
-					writer.flush();
 					return;
-				} else if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS) {
+				} else if (q1.getId() % 50 == 0 && !printedResults) {
+					writeResults();
+				}
+				else if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS) {
 					try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {

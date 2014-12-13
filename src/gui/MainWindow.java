@@ -52,7 +52,7 @@ public class MainWindow {
 	private String testNumber = "test";
 
 	public void initWise() {
-		int test = 1;
+		int test = 3;
 		testNumber += Integer.toString(test);
 		switch (test) {
 		case 1:
@@ -74,16 +74,18 @@ public class MainWindow {
 			break;
 		case 3:
 			
-			wiseAgents.put("f1", new WiseData("f1", 100, 0, 0, 0, 0, 0, 0));
+			wiseAgents.put("f1", new WiseData("f1", 90, 0, 0, 0, 0, 0, 0));
 			wiseAgentsList.addElement("f1");
-			wiseAgents.put("f2", new WiseData("f2", 0, 100, 0, 0, 0, 0, 0));
+			wiseAgents.put("f2", new WiseData("f2", 0, 90, 0, 0, 0, 0, 0));
 			wiseAgentsList.addElement("f2");
-			wiseAgents.put("f3", new WiseData("f3", 0, 0, 100, 0, 0, 0, 0));
+			wiseAgents.put("f3", new WiseData("f3", 0, 0, 90, 0, 0, 0, 0));
 			wiseAgentsList.addElement("f3");
-			wiseAgents.put("f4", new WiseData("f4", 0, 0, 0, 100, 0, 0, 0));
+			wiseAgents.put("f4", new WiseData("f4", 0, 0, 0, 90, 0, 0, 0));
 			wiseAgentsList.addElement("f4");
-			wiseAgents.put("f5", new WiseData("f5", 80, 80, 80, 80, 0, 0, 0));
+			wiseAgents.put("f5", new WiseData("f5", 60, 60, 60, 60, 0, 0, 0));
 			wiseAgentsList.addElement("f5");
+			wiseAgents.put("f6", new WiseData("f6", 50, 50, 50, 50, 0, 0, 0));
+			wiseAgentsList.addElement("f6");
 			
 			break;
 		case 4:
