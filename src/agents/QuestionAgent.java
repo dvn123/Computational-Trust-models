@@ -27,19 +27,20 @@ import util.Question;
 public class QuestionAgent extends Agent {
 
 	private static int[] agentsResults = new int[10];
+	private static int[] agentsNrQuestions= new int[10];
 	private static Stack<Question> questions = new Stack<Question>();
 	private static ArrayList<AID> players;
 	protected static PrintWriter writer = null;
 	protected static boolean printedResults = false;
-	
+
 	public static void setWriter(PrintWriter w) {
 		writer = w;
 	}
 
 	protected void setup() {
-		
+
 		players = getPlayers();
-		
+
 		/*for(int index = 0; index < agentsResults.length; index++) {
 			agentsResults[index] = 0;
 		}*/
@@ -137,17 +138,17 @@ public class QuestionAgent extends Agent {
 				// We want to receive a reply in 10 secs
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
 				//msg.setContent("dummy-action");
-				
+
 				Question q1 = Question.generateQuestion();
-				
+
 				if (q1.getId() >= Constants.NUMBER_OF_QUESTIONS && !printedResults) {
 					writer.println("</ul><h1 id=\"results\">Results</h1>");
 					writer.println("<ul>");
 					for(int i = 0; i < players.size(); i++) {
 						writer.println("<li>");
 						writer.print("<strong>" + players.get(i).getLocalName() + ":</strong> ");
-						float v = (float)agentsResults[i] / questions.size();
-						writer.print("  score: " + agentsResults[i] + "/" + questions.size()  + "  ratio: " + v);
+						float v = (float)agentsResults[i] / agentsNrQuestions[i];
+						writer.print("  score: " + agentsResults[i] + "/" + agentsNrQuestions[i]  + "  ratio: " + v);
 						writer.println("</li>");
 					}
 					writer.println("</ul>");
@@ -180,37 +181,39 @@ public class QuestionAgent extends Agent {
 				//wait for multiple players
 				writer.println("<li><h3><strong>" + question.getStringQuestion() + "</strong></h3>");
 				writer.println("<ul>");
-				
+
 				for (int i = 0; i < players.size(); ++i) {
 					ACLMessage answer = blockingReceive(template, 10000);
 
 					writeMsg("Agent "+answer.getSender().getLocalName()+" successfully performed the requested action");
 					String[] res = answer.getContent().split(Constants.SPLIT_STRING);
-					
+
 					if (res.length < 2) {
 						System.err.println("Error parsing agent response!");
 						continue;
 					}
-					
+
 					int result = Integer.parseInt(res[0]);
 					writeMsg("Result returned by " + answer.getSender().getLocalName() + ": " + result);
 
 					String wiseAgent = res[1];
-					
+
 					ACLMessage reply = answer.createReply();
 					reply.setOntology(Constants.SOLUTION_ONTOLOGY);
-					
-					String color = "red";
 
+					String color = "red";
+					int agentIndex = getAgentIndex(answer.getSender().getLocalName());
 					if(result == question.getResult()) {
 						reply.setPerformative(ACLMessage.CONFIRM);
-						int agentIndex = getAgentIndex(answer.getSender().getLocalName());
+
 						agentsResults[agentIndex] += 1;
+
 						color = "green";
 					}
-					else 
+					else
 						reply.setPerformative(ACLMessage.DISCONFIRM);
-					
+					agentsNrQuestions[agentIndex] +=1;
+
 					writer.println("<li><strong>" + answer.getSender().getLocalName() + "</strong> result by WiseAgent " + wiseAgent + ": <span style=\"color:" + color + "\">" + result + "</span></li>");
 
 					reply.setContent(Integer.toString(question.getId()));
@@ -229,8 +232,8 @@ public class QuestionAgent extends Agent {
 				writer.println("</ul></li>");
 				writer.flush();
 			}
-			
-			
+
+
 			writeMsg("***********************************************************");
 			try {
 				Thread.sleep(Constants.TIME_BETWEEN_QUESTIONS);
@@ -244,14 +247,14 @@ public class QuestionAgent extends Agent {
 
 	public static double getAgentRatio(String agent) {
 		int i = getAgentIndex(agent);
-		
+
 		if (i < 0)
 			return 0;
 
-		double ratio = (double) agentsResults[i] / (questions.size() == 0 ? 1 : questions.size()) * 100;	
+		double ratio = (double) agentsResults[i] / (agentsNrQuestions[i] == 0 ? 1 : agentsNrQuestions[i]) * 100;	
 
 		if (Constants.printRatio)
-			System.err.println("-------> " + agentsResults[i] + "/" + questions.size() + " = " + ratio + "   -  - " + agent);
+			System.err.println("-------> " + agentsResults[i] + "/" + agentsNrQuestions[i] + " = " + ratio + "   -  - " + agent);
 
 		return ratio;
 	}
@@ -259,7 +262,7 @@ public class QuestionAgent extends Agent {
 	public static int getNumberQuestions() {
 		return questions.size();
 	}
-	
+
 	public static int getAgentIndex(String localName) {
 		int i;
 		for (i = 0; i < players.size(); i++) {
@@ -271,7 +274,7 @@ public class QuestionAgent extends Agent {
 
 		if (i == players.size())
 			return -1;
-		
+
 		return i;
 	}
 }
