@@ -49,15 +49,18 @@ public class MainWindow {
 	@SuppressWarnings("rawtypes")
 	private JList list;
 	private PrintWriter writer = null;
+	private String testNumber = "test";
 
 	public void initWise() {
 		int test = 1;
+		testNumber += Integer.toString(test);
 		switch (test) {
 		case 1:
 			wiseAgents.put("f1", new WiseData("f1", 100, 100, 100, 100, 0, 0, 0));
 			wiseAgentsList.addElement("f1");
 			wiseAgents.put("f2", new WiseData("f2", 0, 0, 0, 0, 0, 0, 0));
 			wiseAgentsList.addElement("f2");
+			testNumber = "test1";
 			break;
 		case 2:
 			wiseAgents.put("f1", new WiseData("f1", 100, 0, 0, 0, 0, 0, 0));
@@ -250,7 +253,7 @@ public class MainWindow {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
 				SimpleDateFormat sdf2 = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 				
-				folder = "log/" + sdf.format(date);
+				folder = "log/" + testNumber + "_" +sdf.format(date);
 				File theDir2 = new File(folder);
 
 				// if the directory does not exist, create it
