@@ -85,7 +85,6 @@ public class AccuracyLineChart extends Application {
 		animation.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new EventHandler<ActionEvent>() {
 
 			@Override public void handle(ActionEvent actionEvent) {
-				System.out.println(timeInHours);
 				
 				nextTime();
 				plotTime();
